@@ -418,15 +418,19 @@ async function api(path, p = {}) {
   return j;
 }
 
-async function saldo() {
+async function saldo(manual) {
+  if (!tg || !tg.initData) { bal.textContent = '—'; uid.textContent = 'Buka lewat Telegram'; return; }
   try {
-    const j = await api('/profile');
+    const j = await api('/profile');   // ID dari Telegram -> saldo dari users.json (GitHub)
     bal.textContent = rp(j.balance);
-    if (j.banned) { $app.innerHTML = '<div class="msg err">Akun kamu diblokir.</div>'; }
-    if (j.username) uid.textContent = '@' + j.username + ' · ID ' + j.id;
+    srv.textContent = j.found ? 'MEMBER' : 'BARU';
+    uid.textContent = (j.username ? '@' + j.username + ' · ' : '') + 'ID ' + j.id;
     if (j.name) nm.textContent = j.name;
+    if (manual) toast('Saldo diperbarui');
   } catch (e) {
+    if (/diblokir/i.test(e.message)) { srv.textContent = 'DIBLOKIR'; $app.innerHTML = '<div class="msg err">Akun kamu diblokir.</div>'; }
     bal.textContent = '—';
+    if (manual) toast(e.message);
   }
 }
 
@@ -966,6 +970,8 @@ saldo();
 
 // refresh saldo otomatis tiap 30 detik
 setInterval(saldo, 30000);
+document.querySelector('.bal').addEventListener('click', () => saldo(true));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) saldo(); });
 </script>
 </body>
 </html>
