@@ -4,18 +4,22 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+if (typeof fetch !== 'function') {
+  console.error('Node.js kamu ' + process.version + ' terlalu lama. Butuh Node 18 ke atas (fetch bawaan).');
+  process.exit(1);
+}
 const C = require('./config');
+const DEBUG = String(process.env.DEBUG || C.DEBUG || '') === 'true';
 const PORT = C.PORT;
 const BASE = C.DITZ_BASE;
 const KEY = C.DITZ_KEY;
 const BOT = C.BOT_TOKEN;
 
-const GH_API_ROOT = process.env.GH_API_ROOT || 'https://api.github.com'; // override hanya untuk tes
-const GH_URL = `${GH_API_ROOT}/repos/${C.GH_OWNER}/${C.GH_REPO}/contents/${C.GH_PATH.split('/').map(encodeURIComponent).join('/')}?ref=${encodeURIComponent(C.GH_BRANCH)}`;
+const SALDO_FILE = C.SALDO_FILE || path.join(__dirname, 'saldo.json');
 
 const missing = v => !v || String(v).startsWith('ISI_');
-if (missing(KEY) || missing(BOT) || missing(C.GH_TOKEN) || missing(C.GH_OWNER)) {
-  console.error('Isi DITZ_KEY, BOT_TOKEN, GH_TOKEN dan GH_OWNER di config.js (atau environment variable).');
+if (missing(KEY) || missing(BOT)) {
+  console.error('Isi DITZ_KEY dan BOT_TOKEN di config.js (atau environment variable).');
   process.exit(1);
 }
 
@@ -56,44 +60,34 @@ const json = (res, code, obj) => {
   res.end(JSON.stringify(obj));
 };
 
-// ===== Baca users.json dari GitHub (read-only, cache pendek + ETag) =====
-const CACHE_MS = 5000;
-const STALE_MAX_MS = 5 * 60 * 1000;
-let cache = { users: null, etag: null, at: 0 };
-let inflight = null;
+// ===== Baca saldo.json (lokal). Dibaca ulang otomatis kalau file berubah =====
+let cache = { users: null, mtime: 0 };
 
-async function fetchUsers() {
-  const headers = {
-    Authorization: `Bearer ${C.GH_TOKEN}`,
-    Accept: 'application/vnd.github.raw+json', // isi file mentah, aman untuk file > 1 MB
-    'X-GitHub-Api-Version': '2022-11-28',
-    'User-Agent': 'nokos-miniapp'
-  };
-  if (cache.etag) headers['If-None-Match'] = cache.etag;
-  const r = await fetch(GH_URL, { headers });
-  if (r.status === 304 && cache.users) { cache.at = Date.now(); return cache.users; }
-  if (r.status === 404) throw new Error(`GitHub 404: cek GH_OWNER/GH_REPO/GH_PATH/GH_BRANCH dan izin token (${C.GH_OWNER}/${C.GH_REPO}/${C.GH_PATH})`);
-  if (!r.ok) throw new Error('GitHub ' + r.status);
-  const users = JSON.parse((await r.text()) || '{}');
-  cache = { users, etag: r.headers.get('etag'), at: Date.now() };
-  return users;
+function getUsers() {
+  let st;
+  try { st = fs.statSync(SALDO_FILE); }
+  catch { throw new Error('File saldo tidak ditemukan: ' + SALDO_FILE); }
+  if (!cache.users || st.mtimeMs !== cache.mtime) {
+    try { cache = { users: JSON.parse(fs.readFileSync(SALDO_FILE, 'utf8') || '{}'), mtime: st.mtimeMs }; }
+    catch (e) {
+      if (cache.users) return cache.users; // file sedang ditulis bot: pakai data terakhir yang valid
+      throw new Error('saldo.json bukan JSON yang valid: ' + e.message);
+    }
+  }
+  return cache.users;
 }
 
-async function getUsers() {
-  if (cache.users && Date.now() - cache.at < CACHE_MS) return cache.users;
-  try {
-    if (!inflight) inflight = fetchUsers().finally(() => { inflight = null; });
-    return await inflight;
-  } catch (e) {
-    if (cache.users && Date.now() - cache.at < STALE_MAX_MS) return cache.users; // pakai data lama sementara
-    throw e;
-  }
+// Dukung dua bentuk: { "id": { saldo, banned, ... } } atau { "id": 5000 }
+function normalize(raw) {
+  if (raw == null) return null;
+  if (typeof raw === 'number') return { saldo: raw };
+  return raw;
 }
 
 // Cari user berdasarkan ID Telegram. Siapa pun boleh membuka; tidak ada daftar ID yang diizinkan.
 async function lookup(tgUser) {
-  const users = await getUsers();
-  const row = users[String(tgUser.id)];
+  const users = getUsers();
+  const row = normalize(users[String(tgUser.id)]);
   return { found: !!row, row: row || null };
 }
 
@@ -142,7 +136,7 @@ http.createServer(async (req, res) => {
       });
     } catch (e) {
       console.error('[profile]', e.message);
-      return json(res, 503, { detail: 'Saldo belum bisa dimuat, coba lagi' }); // TIDAK fallback ke saldo Ditznesia
+      return json(res, 503, { detail: DEBUG ? 'DEBUG: ' + e.message : 'Saldo belum bisa dimuat, coba lagi' }); // TIDAK fallback ke saldo Ditznesia
     }
   }
 
@@ -167,4 +161,8 @@ http.createServer(async (req, res) => {
   } catch (e) {
     json(res, 502, { detail: 'Server tidak merespons' });
   }
-}).listen(PORT, () => console.log('Mini App jalan di port ' + PORT + ' | saldo dari ' + C.GH_OWNER + '/' + C.GH_REPO + '/' + C.GH_PATH));
+}).listen(PORT, () => {
+  try { console.log('[SALDO OK] ' + SALDO_FILE + ' terbaca, ' + Object.keys(getUsers()).length + ' user'); }
+  catch (e) { console.error('[SALDO GAGAL] ' + e.message); }
+  console.log('Mini App jalan di port ' + PORT + (DEBUG ? ' | DEBUG ON' : ''));
+});
