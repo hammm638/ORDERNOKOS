@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nokos Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0b0e1d;--bg2:#121733;--card:#171d3d;--line:#273058;--tx:#f3ecdc;--mut:#8f97b8;--gold:#e6c78b;--gold2:#b8924a;--ok:#6fd3a0;--bad:#ff7a7a;color-scheme:dark}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:env(safe-area-inset-top) 0 calc(78px + env(safe-area-inset-bottom))}
+.serif{font-family:"Iowan Old Style",Georgia,serif}
+header{padding:18px 16px 8px;background:radial-gradient(120% 90% at 100% 0,#26204a 0,transparent 60%)}
+.me{display:flex;align-items:center;gap:12px}
+.av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1b1405;display:grid;place-items:center;font-weight:700;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.me b{display:block;font-size:16px}.me small{color:var(--mut)}
+.bal{margin:14px 0 4px;padding:16px;border-radius:20px;background:linear-gradient(135deg,#232a57,#171d3d);border:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end}
+.bal small{color:var(--mut);display:block}.bal .n{font-size:28px;color:var(--gold);letter-spacing:.3px}
+main{padding:8px 16px}
+h2{font-size:20px;margin:10px 0 12px}
+.top{display:flex;align-items:center;gap:8px}
+.bk{border:1px solid var(--line);background:var(--card);color:var(--tx);border-radius:12px;width:36px;height:36px;font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.s{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left;color:var(--tx);font:inherit;cursor:pointer}
+.s:active,.row:active{transform:scale(.98);border-color:var(--gold2)}
+.s b{display:block;color:var(--gold);font-size:17px}.s span{color:var(--mut);font-size:12.5px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.row .t{min-width:0}.row .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis}.row .t span{color:var(--mut);font-size:12.5px}
+.row .p{color:var(--gold);font-weight:600;white-space:nowrap}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:12px;color:var(--tx);padding:12px;font:inherit;margin-bottom:10px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+label{display:block;color:var(--mut);font-size:12.5px;margin:2px 0 5px}
+.btn{width:100%;border:0;border-radius:14px;padding:14px;font:inherit;font-weight:700;color:#1b1405;background:linear-gradient(135deg,var(--gold),var(--gold2));cursor:pointer}
+.btn.g{background:var(--card);color:var(--tx);border:1px solid var(--line)}.btn:disabled{opacity:.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--bg2);color:var(--tx);border-radius:99px;padding:7px 13px;font:inherit;font-size:13px}
+.chip.on{background:var(--gold);color:#1b1405;border-color:var(--gold);font-weight:600}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(11,14,29,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:0;border:0;color:var(--mut);font:inherit;font-size:11.5px;padding:6px 0;display:grid;gap:2px;justify-items:center}
+nav button i{font-style:normal;font-size:19px}nav button.on{color:var(--gold)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;z-index:9}
+.sh{width:100%;max-height:88vh;overflow:auto;background:var(--bg2);border-radius:24px 24px 0 0;border:1px solid var(--line);padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.kv span{color:var(--mut)}.kv b{word-break:break-all;text-align:right}
+.big{font-size:30px;color:var(--gold);letter-spacing:2px;text-align:center;margin:12px 0}
+.msg{color:var(--mut);text-align:center;padding:26px 8px}.err{color:var(--bad)}
+.ok{color:var(--ok)}
+.sp{height:22px;width:22px;border:3px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:r .8s linear infinite;margin:26px auto}
+@keyframes r{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sp{animation-duration:3s}}
+</style>
+</head>
+<body>
+<header>
+  <div class="me"><div class="av" id="av">?</div><div><b id="nm">Tamu</b><small id="uid">Buka lewat Telegram</small></div></div>
+  <div class="bal"><div><small>Saldo</small><div class="n serif" id="bal">Rp 0</div></div><small id="srv"></small></div>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+
+<script>
+const API = '/api/proxy';
+const tg = window.Telegram && Telegram.WebApp;
+const U = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+if (tg) { tg.ready(); tg.expand(); try { tg.setHeaderColor('#0b0e1d'); tg.setBackgroundColor('#0b0e1d'); } catch (e) {} }
+if (U) {
+  const n = [U.first_name, U.last_name].filter(Boolean).join(' ');
+  nm.textContent = n || U.username;
+  uid.textContent = (U.username ? '@' + U.username + ' · ' : '') + 'ID ' + U.id;
+  av.innerHTML = U.photo_url ? '<img src="' + U.photo_url + '" alt="">' : (n[0] || '?').toUpperCase();
+}
+const rp = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const $app = document.getElementById('app');
+
+async function api(path, p = {}) {
+  const q = new URLSearchParams({ path, ...p });
+  const r = await fetch(API + '?' + q, { headers: { 'x-init-data': tg ? tg.initData : '' } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || 'Error ' + r.status);
+  return j;
+}
+async function saldo() { try { const j = await api('/profile'); bal.textContent = rp(j.balance); } catch (e) { bal.textContent = '—'; } }
+
+/* ---------- navigasi ---------- */
+let stack = [];
+const TABS = [['nomor', '📱', 'Nomor'], ['sosmed', '📈', 'Sosmed'], ['topup', '🎮', 'Topup'], ['lain', '✦', 'Lainnya'], ['riwayat', '🕘', 'Riwayat']];
+const nav = document.getElementById('nav');
+TABS.forEach(([k, i, l]) => { const b = el('button', '', '<i>' + i + '</i>' + l); b.dataset.k = k; b.onclick = () => tab(k); nav.appendChild(b); });
+function tab(k) {
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+  stack = [{ t: TABS.find(x => x[0] === k)[2], f: SCREENS[k] }]; render();
+}
+function go(t, f) { stack.push({ t, f }); render(); scrollTo(0, 0); }
+function back() { stack.pop(); render(); }
+async function render() {
+  const s = stack[stack.length - 1];
+  $app.innerHTML = '';
+  const top = el('div', 'top');
+  if (stack.length > 1) { const b = el('button', 'bk', '‹'); b.setAttribute('aria-label', 'Kembali'); b.onclick = back; top.appendChild(b); }
+  top.appendChild(el('h2', 'serif', esc(s.t)));
+  $app.appendChild(top);
+  const box = el('div'); box.appendChild(el('div', 'sp')); $app.appendChild(box);
+  try { box.innerHTML = ''; await s.f(box); }
+  catch (e) { box.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; }
+}
+function sheet(build) {
+  const ov = el('div', 'ov'), sh = el('div', 'sh');
+  ov.appendChild(sh); document.body.appendChild(ov);
+  const close = () => { ov.remove(); };
+  ov.onclick = e => { if (e.target === ov) close(); };
+  build(sh, close); return close;
+}
+function list(box, items, map, search) {
+  if (!items.length) { box.innerHTML = '<div class="msg">Belum ada data.</div>'; return; }
+  let inp; if (search !== false && items.length > 8) { inp = el('input'); inp.placeholder = 'Cari…'; box.appendChild(inp); }
+  const wrap = el('div'); box.appendChild(wrap);
+  const draw = f => {
+    wrap.innerHTML = '';
+    items.forEach(x => {
+      const [t, sub, p, fn] = map(x);
+      if (f && !(t + ' ' + sub).toLowerCase().includes(f)) return;
+      const r = el('div', 'row', '<div class="t"><b>' + esc(t) + '</b><span>' + esc(sub) + '</span></div>' + (p != null ? '<div class="p">' + esc(p) + '</div>' : ''));
+      if (fn) r.onclick = () => fn(x); wrap.appendChild(r);
+    });
+  };
+  if (inp) inp.oninput = () => draw(inp.value.trim().toLowerCase());
+  draw('');
+}
+const toast = m => tg && tg.showAlert ? tg.showAlert(m) : alert(m);
+function kv(o) { return Object.entries(o).filter(([, v]) => v !== '' && v != null && typeof v !== 'object').map(([k, v]) => '<div class="kv"><span>' + esc(k) + '</span><b>' + esc(v) + '</b></div>').join(''); }
+function result(title, data, statusFn) {
+  sheet((sh, close) => {
+    const draw = d => {
+      sh.innerHTML = '<h2 class="serif">' + esc(title) + '</h2>' + (d.otp && d.otp !== 'Waiting' ? '<div class="big serif">' + esc(d.otp) + '</div>' : '') + (d.code ? '<div class="big serif">' + esc(d.code) + '</div>' : '') + kv(d);
+      if (statusFn) { const b = el('button', 'btn g', 'Perbarui status'); b.style.marginTop = '12px'; b.onclick = async () => { try { draw(await statusFn()); } catch (e) { toast(e.message); } }; sh.appendChild(b); }
+      const c = el('button', 'btn', 'Tutup'); c.style.marginTop = '8px'; c.onclick = close; sh.appendChild(c);
+    };
+    draw(data);
+  });
+  saldo();
+}
+
+/* ---------- NOMOR OTP (Server 1–9) ---------- */
+const SV = { 1: ['Operator seluler'], 2: ['Pilih provider'], 3: ['Reguler'], 4: ['Global (kode ISO)'], 5: ['Varian harga'], 6: ['Operator + harga'], 7: ['Beli ulang nomor'], 8: ['WhatsApp siap pakai'], 9: ['Multi layanan'] };
+const NEED_OP = [1, 4, 6];
+async function nomor(box) {
+  const g = el('div', 'grid');
+  Object.keys(SV).forEach(k => { const b = el('button', 's', '<b>Server ' + k + '</b><span>' + SV[k][0] + '</span>'); b.onclick = () => pickServer(+k); g.appendChild(b); });
+  box.appendChild(g);
+}
+function pickServer(s) {
+  if (s === 8) return go('Server 8', async c => list(c, await api('/services', { server: 8 }), x => [x.service_name || x.name || x.produk || x.id, 'Stok ' + (x.count != null ? x.count : '-'), rp(x.price), () => confirmOrder({ server: 8, produk: x.produk || x.id }, x.service_name || x.name, x.price, false)]));
+  if (s === 9) return go('Server 9 · Multi', async c => {
+    const d = await api('/services', { server: 9 }); const sel = new Set();
+    c.appendChild(el('div', 'msg', 'Pilih 2–5 layanan untuk 1 nomor.'));
+    const w = el('div'); c.appendChild(w);
+    const draw = () => { w.innerHTML = ''; d.forEach(x => { const id = x.produk || x.id; const r = el('div', 'row', '<div class="t"><b>' + (sel.has(id) ? '✓ ' : '') + esc(x.service_name || x.name) + '</b><span>Stok ' + (x.count != null ? x.count : '-') + '</span></div><div class="p">' + rp(x.price) + '</div>'); r.onclick = () => { sel.has(id) ? sel.delete(id) : sel.size < 5 && sel.add(id); draw(); }; w.appendChild(r); }); };
+    draw();
+    const b = el('button', 'btn', 'Beli nomor multi'); b.onclick = async () => {
+      if (sel.size < 2) return toast('Pilih minimal 2 layanan');
+      b.disabled = true; try { const r = await api('/order-multi', { produk: [...sel].join(',') }); result('Nomor ' + r.number, { Nomor: r.number, Total: rp(r.total) }); (r.orders || []).forEach(o => track(o.id)); } catch (e) { toast(e.message); } b.disabled = false;
+    }; c.appendChild(b);
+  });
+  go('Server ' + s + ' · Negara', async c => {
+    const d = await api('/countries', { server: s });
+    list(c, d, x => [(x.flag || '') + ' ' + x.name, 'Kode ' + x.code, null, () => pickService(s, x)]);
+  });
+}
+function pickService(s, ct) {
+  go(ct.name, async c => {
+    const d = await api('/services', { server: s, country: ct.code });
+    list(c, d, x => [x.service_name || x.name || x.produk, 'Stok ' + (x.count != null ? x.count : '-') + (x.rate_sms ? ' · sukses ' + x.rate_sms + '%' : ''), rp(x.price),
+      () => confirmOrder({ server: s, country: ct.code, produk: x.produk || x.id, ...(x.provider != null && x.provider !== '' ? { provider: x.provider } : {}) }, x.service_name || x.produk, x.price, true)]);
+  });
+}
+function confirmOrder(p, label, price, multi) {
+  sheet(async (sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(label) + '</h2>' + kv({ Server: p.server, Harga: rp(price) });
+    let op = 'any', qty = 1;
+    if (NEED_OP.includes(+p.server)) {
+      const lb = el('label', '', 'Operator'); lb.style.marginTop = '12px'; sh.appendChild(lb);
+      const ch = el('div', 'chips'); sh.appendChild(ch);
+      let ops = ['any']; try { ops = (await api('/operators', { server: p.server, country: p.country })).operators || ops; } catch (e) {}
+      const dr = () => { ch.innerHTML = ''; ops.forEach(o => { const b = el('button', 'chip' + (o === op ? ' on' : ''), o === 'any' ? 'Acak' : o); b.onclick = () => { op = o; dr(); }; ch.appendChild(b); }); }; dr();
+    } else if (+p.server === 7) op = 'any';
+    if (multi) { const lb = el('label', '', 'Jumlah nomor (1–5)'); lb.style.marginTop = '12px'; const q = el('input'); q.type = 'number'; q.min = 1; q.max = 5; q.value = 1; q.oninput = () => qty = Math.min(5, Math.max(1, +q.value || 1)); sh.append(lb, q); }
+    const b = el('button', 'btn', 'Beli sekarang'); b.style.marginTop = '8px';
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const q2 = { ...p }; if (NEED_OP.includes(+p.server) || +p.server === 7) q2.operator = op; if (qty > 1) q2.total = qty;
+        const r = await api('/order', q2); close(); saldo();
+        const os = r.orders || [r];
+        if (os.length === 1) track(os[0].id); else sheet((s2, c2) => { s2.innerHTML = '<h2 class="serif">' + os.length + ' nomor dibeli</h2>'; os.forEach(o => { const r2 = el('div', 'row', '<div class="t"><b>' + esc(o.number) + '</b><span>' + esc(o.service_name) + '</span></div>'); r2.onclick = () => { c2(); track(o.id); }; s2.appendChild(r2); }); });
+      } catch (e) { toast(e.message); b.disabled = false; }
+    };
+    sh.appendChild(b);
+  });
+}
+function track(id, srv) {
+  let timer;
+  sheet((sh, close) => {
+    const stop = () => clearInterval(timer);
+    const draw = d => {
+      const done = d.status !== 'pending';
+      sh.innerHTML = '<h2 class="serif">Pesanan nomor</h2><div class="big serif">' + (d.otp && d.otp !== 'Waiting' ? esc(d.otp) : '<span style="font-size:15px;color:var(--mut)">Menunggu OTP…</span>') + '</div>' + kv({ Nomor: d.number, Status: d.status, Layanan: d.service_name, Harga: d.price != null ? rp(d.price) : '' });
+      const row = el('div', 'chips'); row.style.marginTop = '12px'; sh.appendChild(row);
+      const add = (t, fn, g) => { const b = el('button', 'chip', t); b.onclick = async () => { try { await fn(); } catch (e) { toast(e.message); } }; row.appendChild(b); };
+      if (d.number) add('Salin nomor', () => navigator.clipboard.writeText(d.number).then(() => toast('Nomor disalin')));
+      if (d.otp && d.otp !== 'Waiting') add('Salin OTP', () => navigator.clipboard.writeText(d.otp).then(() => toast('OTP disalin')));
+      if (d.can_resend) add('Kirim ulang', async () => { draw(await api('/resend', { id })); });
+      if (String(d.server) === '8' || d.wa_ready !== undefined) add('Minta kode', async () => { await api('/request-code', { id }); toast('Kode diminta, tunggu ±3 menit'); });
+      if (d.status === 'pending' || d.status === 'success') add('Batalkan', async () => { const r = await api('/cancel', { id }); toast('Status: ' + (r.status || 'dibatalkan')); saldo(); });
+      const c = el('button', 'btn g', 'Tutup'); c.onclick = () => { stop(); close(); }; sh.appendChild(c);
+    };
+    const tick = async () => { try { const d = await api('/status', { id }); draw(d); if (d.otp && d.otp !== 'Waiting' && d.status !== 'pending') stop(); } catch (e) {} };
+    tick(); timer = setInterval(tick, 5000);
+    sh.parentElement.addEventListener('remove', stop);
+    new MutationObserver(() => { if (!document.body.contains(sh)) stop(); }).observe(document.body, { childList: true });
+  });
+}
+
+/* ---------- SUNTIK SOSMED ---------- */
+async function sosmed(box) {
+  const d = (await api('/smm-platforms')).platforms || [];
+  list(box, d, p => [p.label, (p.types || []).join(', '), p.total + ' layanan', () => go(p.label, async c => list(c, p.types || [], t => [t, '', null, () => smmServices(p, t)], false))]);
+}
+function smmServices(p, t) {
+  go(p.label + ' · ' + t, async c => list(c, await api('/smm-services', { platform: p.key, type: t }), x => [x.name, 'Min ' + x.min + ' · Max ' + x.max + (x.refill ? ' · refill' : ''), rp(x.per_1000) + '/1K', () => smmForm(x)]));
+}
+function smmForm(x) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(x.name) + '</h2><label>' + esc(x.target_label || 'Target') + '</label>';
+    const tgt = el('input'); tgt.placeholder = x.target_hint || ''; sh.appendChild(tgt);
+    let qty, cm;
+    const est = el('div', 'msg'); est.style.padding = '4px';
+    if (x.is_custom) { sh.appendChild(el('label', '', 'Komentar (1 baris = 1 komentar)')); cm = el('textarea'); cm.rows = 4; sh.appendChild(cm); }
+    else { sh.appendChild(el('label', '', 'Jumlah (' + x.min + '–' + x.max + ')')); qty = el('input'); qty.type = 'number'; qty.value = x.min; sh.appendChild(qty); }
+    const upd = () => { const n = x.is_custom ? cm.value.split('\n').filter(Boolean).length : +qty.value; est.textContent = 'Estimasi ' + rp(Math.ceil(n * x.per_1000 / 1000)); };
+    (qty || cm).oninput = upd; upd(); sh.appendChild(est);
+    const b = el('button', 'btn', 'Pesan sekarang'); b.onclick = async () => {
+      b.disabled = true;
+      try { const p = { service_id: x.id, target: tgt.value.trim() }; if (x.is_custom) p.comments = cm.value; else p.quantity = qty.value; const r = await api('/smm-order', p); close(); result('Pesanan dibuat', r); }
+      catch (e) { toast(e.message); b.disabled = false; }
+    }; sh.appendChild(b);
+  });
+}
+
+/* ---------- TOPUP GAME ---------- */
+async function topup(box) {
+  list(box, await api('/tp-games'), g => [g.game, g.products + ' nominal', null, () => go(g.game, async c => list(c, await api('/tp-products', { game: g.game }), x => [x.name, x.flash ? '🔥 ' + x.flash : x.code, rp(x.price), () => tpForm(x)]))]);
+}
+function tpForm(x) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(x.game + ' · ' + x.name) + '</h2><div class="kv"><span>Harga</span><b>' + rp(x.price) + '</b></div><label style="margin-top:12px">User ID</label>';
+    const t = el('input'); t.inputMode = 'numeric'; sh.appendChild(t);
+    let z; if (x.need_zone) { sh.appendChild(el('label', '', 'Zone / Server ID')); z = el('input'); z.inputMode = 'numeric'; sh.appendChild(z); }
+    const nmx = el('div', 'msg ok'); nmx.style.padding = '2px'; sh.appendChild(nmx);
+    const P = () => ({ code: x.code, target: t.value.trim(), ...(z ? { zone: z.value.trim() } : {}) });
+    if (x.check_name) { const c = el('button', 'btn g', 'Cek nama akun'); c.style.marginBottom = '8px'; c.onclick = async () => { try { nmx.textContent = (await api('/tp-check', P())).name; } catch (e) { nmx.innerHTML = '<span class="err">' + esc(e.message) + '</span>'; } }; sh.appendChild(c); }
+    const b = el('button', 'btn', 'Topup sekarang'); b.onclick = async () => { b.disabled = true; try { const r = await api('/tp-order', P()); close(); result('Topup diproses', r); } catch (e) { toast(e.message); b.disabled = false; } }; sh.appendChild(b);
+  });
+}
+
+/* ---------- LAINNYA ---------- */
+async function lain(box) {
+  const items = [
+    ['Gmail siap pakai', 'Akun Gmail + password', gmail], ['Sewa email', 'Kode verifikasi situs', mailRent],
+    ['Telegram siap pakai', 'Kode lewat email', () => ready('telegram')], ['WhatsApp siap pakai V2', 'Kode lewat email', () => ready('whatsapp')],
+    ['Shopee siap pakai', 'Akun Shopee baru', shopee], ['OTP via WhatsApp', 'Shopee, Gojek, Dana, dll', otpwa]
+  ];
+  const g = el('div', 'grid'); items.forEach(([t, s, f]) => { const b = el('button', 's', '<b style="font-size:15px">' + t + '</b><span>' + s + '</span>'); b.onclick = f; g.appendChild(b); }); box.appendChild(g);
+}
+const gmail = () => go('Gmail', async c => {
+  const d = await api('/gmail-stock');
+  c.innerHTML = kv({ Stok: d.stock, Harga: rp(d.price), 'Maks per order': d.max_qty });
+  const q = el('input'); q.type = 'number'; q.min = 1; q.max = d.max_qty; q.value = 1; q.style.marginTop = '12px';
+  const b = el('button', 'btn', 'Beli Gmail'); b.onclick = async () => { try { const r = await api('/gmail-order', { qty: q.value }); (Array.isArray(r) ? r : [r]).forEach(o => result('Akun Gmail', o)); } catch (e) { toast(e.message); } };
+  c.append(q, b);
+});
+const mailRent = () => go('Sewa email', async c => {
+  c.appendChild(el('label', '', 'Situs tujuan (contoh tiktok.com)')); const s = el('input'); s.placeholder = 'tiktok.com'; c.appendChild(s);
+  const b = el('button', 'btn', 'Lihat domain & harga'); const w = el('div'); w.style.marginTop = '12px'; c.append(b, w);
+  b.onclick = async () => { try { w.innerHTML = ''; list(w, await api('/mail-domains', { site: s.value.trim() }), d => [d.domain, 'Stok ' + d.stock, rp(d.price), async () => { try { const r = await api('/mail-rent', { site: s.value.trim(), domain: d.domain }); result('Email disewa', r, () => api('/status', { id: r.id })); } catch (e) { toast(e.message); } }], false); } catch (e) { toast(e.message); } };
+});
+const ready = app => go(app === 'telegram' ? 'Telegram siap pakai' : 'WhatsApp siap pakai V2', async c => {
+  const d = await api('/tg-countries', { app });
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.countries, x => [x.name, 'Stok ' + x.stock, rp(x.price), async () => { try { const r = await api('/tg-buy', { app, country: x.country }); track(r.id); saldo(); } catch (e) { toast(e.message); } }]);
+});
+const shopee = () => go('Shopee siap pakai', async c => {
+  const d = await api('/shopee-countries');
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.countries, x => [x.name, 'Stok ' + x.stock, rp(x.price), async () => { try { const r = await api('/shopee-buy', { country: x.country }); result('Akun Shopee', r, () => api('/shopee-code', { id: r.id })); } catch (e) { toast(e.message); } }]);
+});
+const otpwa = () => go('OTP via WhatsApp', async c => {
+  const d = await api('/otpwa-services');
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.services, x => [x.name, 'Stok ' + x.stock + ' · sukses ' + x.success_rate + '%', rp(x.price), () => otpwaBuy(x)]);
+});
+function otpwaBuy(x) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(x.name) + '</h2>';
+    let price = x.offers && x.offers[0] ? x.offers[0].price : x.price;
+    const ch = el('div', 'chips'); (x.offers || []).forEach(o => { const b = el('button', 'chip' + (o.price === price ? ' on' : ''), rp(o.price) + ' · ' + o.stock); b.onclick = () => { price = o.price; [...ch.children].forEach(k => k.classList.toggle('on', k === b)); }; ch.appendChild(b); }); sh.appendChild(ch);
+    let nm2; if (x.free_name) { nm2 = el('input'); nm2.placeholder = 'Nama aplikasi'; sh.appendChild(nm2); }
+    const b = el('button', 'btn', 'Beli kode'); b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const r = await api('/otpwa-buy', { service_id: x.id, price, ...(nm2 ? { app_name: nm2.value } : {}) }); close();
+        const get = async () => (await api('/otpwa-orders')).find(o => o.id === r.id) || r;
+        sheet((s2, c2) => {
+          const st = el('div'); s2.appendChild(st);
+          const draw = o => { st.innerHTML = '<h2 class="serif">' + esc(o.app) + '</h2>' + (o.code ? '<div class="big serif">' + esc(o.code) + '</div>' : '') + kv({ Status: o.status, Nomor: o.number, Link: o.link }); };
+          draw(r);
+          const bt = (t, fn) => { const k = el('button', 'btn g', t); k.style.marginTop = '8px'; k.onclick = async () => { try { await fn(); draw(await get()); } catch (e) { toast(e.message); } }; s2.appendChild(k); };
+          bt('Perbarui status', async () => {}); bt('Minta kode', () => api('/otpwa-code', { id: r.id })); bt('Batalkan', () => api('/otpwa-cancel', { id: r.id, reason: 'changed_mind' }));
+          const cl = el('button', 'btn', 'Tutup'); cl.style.marginTop = '8px'; cl.onclick = c2; s2.appendChild(cl);
+        });
+        saldo();
+      } catch (e) { toast(e.message); b.disabled = false; }
+    }; sh.appendChild(b);
+  });
+}
+
+/* ---------- RIWAYAT ---------- */
+async function riwayat(box) {
+  const src = { Nomor: ['/history', o => [o.service_name, o.number + ' · ' + o.status, o.otp && o.otp !== 'Waiting' ? o.otp : rp(o.price), () => track(o.id)]], Sosmed: ['/smm-orders', o => [o.service || 'Order ' + String(o.id).slice(0, 6), o.status + ' · ' + o.quantity, rp(o.price), () => result('Sosmed', o)]], Topup: ['/tp-orders', o => [o.product + ' · ' + o.service, o.status + ' · ' + o.target, rp(o.price), () => result('Topup', o)]], Email: ['/mail-orders', o => [o.email, o.status + (o.code ? ' · ' + o.code : ''), rp(o.price), () => result('Email', o)]], WA: ['/otpwa-orders', o => [o.app, o.status + ' · ' + o.number, o.code || rp(o.price), () => result('OTP WA', o)]] };
+  const ch = el('div', 'chips'), w = el('div'); box.append(ch, w);
+  const load = async k => { [...ch.children].forEach(b => b.classList.toggle('on', b.textContent === k)); w.innerHTML = '<div class="sp"></div>'; try { const d = await api(src[k][0], { limit: 30 }); w.innerHTML = ''; list(w, d, src[k][1], false); } catch (e) { w.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; } };
+  Object.keys(src).forEach(k => { const b = el('button', 'chip', k); b.onclick = () => load(k); ch.appendChild(b); });
+  load('Nomor');
+}
+
+const SCREENS = { nomor, sosmed, topup, lain, riwayat };
+tab('nomor'); saldo();
+</script>
+</body>
+</html>
