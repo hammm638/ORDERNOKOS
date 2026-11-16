@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05070d">
+<title>Nokos · Premium</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   1. VARIABEL
+   ============================================================ */
+:root {
+  --bg: #05070d; --bg-2: #0a0e18; --bg-3: #121733;
+  --ink: #f6f1e6; --muted: #8b93a7;
+  --gold: #f0d28c; --gold-2: #c89b4b; --gold-3: #8a6a2e;
+  --champagne: #fbf0d0;
+  --ok: #6fe0a4; --bad: #ff7a7a;
+  --glass: rgba(20, 26, 42, 0.55);
+  --line: rgba(240, 210, 140, 0.14);
+  --line-strong: rgba(240, 210, 140, 0.35);
+  --radius: 22px;
+  --fd: "Playfair Display", "Iowan Old Style", Georgia, serif;
+  --fb: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(60, 48, 90, 0.55), transparent 60%),
+    radial-gradient(800px 500px at 100% 40%, rgba(240, 210, 140, 0.06), transparent 60%),
+    radial-gradient(700px 500px at 0% 100%, rgba(120, 90, 40, 0.10), transparent 60%),
+    var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--fb);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body {
+  padding: env(safe-area-inset-top) 0 calc(104px + env(safe-area-inset-bottom));
+  position: relative;
+}
+
+.serif { font-family: var(--fd); }
+
+/* ============================================================
+   2. HEADER
+   ============================================================ */
+header {
+  padding: 26px 20px 12px;
+  position: relative; z-index: 1;
+  background: radial-gradient(120% 90% at 100% 0, rgba(70, 50, 120, 0.35) 0, transparent 60%);
+}
+
+.me { display: flex; align-items: center; gap: 14px; }
+
+.av {
+  width: 52px; height: 52px; border-radius: 18px;
+  background: linear-gradient(135deg, #fbf0d0 0%, #c89b4b 60%, #6b4f1d 100%);
+  color: #1a1206; display: grid; place-items: center;
+  font-weight: 800; font-size: 19px; overflow: hidden; flex: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 28px rgba(200, 155, 75, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+.av::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
+  transform: translateX(-100%);
+  animation: avShine 4s ease-in-out infinite;
+}
+@keyframes avShine { 0%, 60% { transform: translateX(-100%); } 80%, 100% { transform: translateX(100%); } }
+.av img { width: 100%; height: 100%; object-fit: cover; }
+
+.me b { display: block; font-size: 16px; font-weight: 700; letter-spacing: .2px; }
+.me small { color: var(--muted); font-size: 12px; letter-spacing: .3px; }
+
+/* ============================================================
+   3. KARTU SALDO
+   ============================================================ */
+.bal {
+  margin: 22px 0 10px; padding: 22px 22px; min-height: 148px;
+  border-radius: 26px; position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(240, 210, 140, 0.30), transparent 55%),
+    radial-gradient(120% 140% at 0% 100%, rgba(80, 60, 30, 0.35), transparent 55%),
+    linear-gradient(150deg, #1c2236 0%, #0e1220 55%, #0a0d18 100%);
+  border: 1px solid var(--line-strong);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -20px 40px rgba(0, 0, 0, 0.35);
+}
+.bal::before {
+  content: ""; position: absolute; inset: -50%;
+  background: linear-gradient(115deg,
+    transparent 40%, rgba(255, 240, 200, 0.10) 48%,
+    rgba(255, 240, 200, 0.18) 50%, rgba(255, 240, 200, 0.10) 52%, transparent 60%);
+  transform: translateX(-40%) rotate(.001deg);
+  animation: shimmer 7s ease-in-out infinite; pointer-events: none;
+}
+@keyframes shimmer { 0%, 55%, 100% { transform: translateX(-40%); } 75% { transform: translateX(40%); } }
+.bal::after {
+  content: ""; position: absolute; width: 220px; height: 220px; right: -70px; top: -90px;
+  border-radius: 50%; border: 1px solid rgba(240, 210, 140, 0.14);
+  box-shadow: 0 0 0 22px rgba(240, 210, 140, 0.04), 0 0 0 46px rgba(240, 210, 140, 0.02);
+  pointer-events: none;
+}
+
+.bal-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 1; }
+.bal-brand { font-family: var(--fd); font-weight: 700; font-size: 17px; letter-spacing: .6px; color: var(--champagne); }
+.bal-chip {
+  width: 34px; height: 26px; border-radius: 6px;
+  background: linear-gradient(135deg, #e6c884 0%, #b8893d 40%, #6b4f1d 100%);
+  position: relative; border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+.bal-chip::before, .bal-chip::after {
+  content: ""; position: absolute; background: rgba(40, 25, 5, 0.45); border-radius: 1px;
+}
+.bal-chip::before { left: 8px; right: 8px; top: 50%; height: 1px; }
+.bal-chip::after { top: 5px; bottom: 5px; left: 50%; width: 1px; }
+
+.bal-body { position: relative; z-index: 1; }
+.bal small {
+  color: var(--muted); display: block; font-size: 11px;
+  letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 6px; font-weight: 500;
+}
+.bal .n {
+  font-family: var(--fd); font-size: 34px; font-weight: 800;
+  background: linear-gradient(135deg, #fffbe6 0%, var(--gold) 55%, #b8893d 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: .4px; font-variant-numeric: tabular-nums; line-height: 1.1;
+}
+.bal-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  position: relative; z-index: 1;
+}
+.bal-foot b { color: var(--gold); font-weight: 600; letter-spacing: 1.6px; }
+
+/* ============================================================
+   4. MAIN
+   ============================================================ */
+main { padding: 14px 20px; position: relative; z-index: 1; }
+h2 { font-family: var(--fd); font-size: 22px; font-weight: 700; margin: 12px 0 18px; letter-spacing: .3px; color: #fff; }
+.top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.bk {
+  border: 1px solid var(--line); background: var(--glass); backdrop-filter: blur(12px);
+  color: var(--gold); border-radius: 14px; width: 42px; height: 42px; font-size: 22px;
+  display: grid; place-items: center; cursor: pointer; transition: all .2s ease;
+}
+.bk:active { transform: scale(.94); border-color: var(--gold); }
+
+/* ============================================================
+   5. GRID
+   ============================================================ */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.s {
+  background: linear-gradient(155deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%), var(--glass);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 20px 16px; min-height: 104px; text-align: left; color: var(--ink); font: inherit;
+  cursor: pointer; position: relative; overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s, background .2s;
+}
+.s::before {
+  content: ""; position: absolute; width: 90px; height: 90px;
+  background: radial-gradient(circle, rgba(240, 210, 140, 0.12) 0%, transparent 70%);
+  border-radius: 50%; right: -32px; bottom: -34px; transition: .35s ease;
+}
+.s:hover { border-color: rgba(240, 210, 140, 0.35); }
+.s:hover::before { transform: scale(1.25); }
+.s:active, .row:active { transform: scale(.97); border-color: var(--gold); background: rgba(28, 35, 56, 0.9); }
+.s b { display: block; color: var(--gold); font-size: 15.5px; font-weight: 700; margin-bottom: 6px; letter-spacing: .15px; }
+.s span { color: var(--muted); font-size: 12px; line-height: 1.45; display: block; }
+
+/* ============================================================
+   6. LIST
+   ============================================================ */
+.row {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  background: linear-gradient(135deg, rgba(25, 32, 51, 0.85), rgba(17, 22, 36, 0.9));
+  border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px 18px; margin-bottom: 10px; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: transform .18s ease, border-color .2s;
+}
+.row .t { min-width: 0; }
+.row .t b { display: block; font-weight: 600; font-size: 14.5px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .t span { color: var(--muted); font-size: 12px; }
+.row .p {
+  color: var(--gold); font-weight: 700; font-size: 13.5px; white-space: nowrap;
+  font-variant-numeric: tabular-nums; background: rgba(240, 210, 140, 0.08);
+  padding: 6px 11px; border-radius: 10px; border: 1px solid rgba(240, 210, 140, 0.18);
+}
+
+/* ============================================================
+   7. FORM
+   ============================================================ */
+input, select, textarea {
+  width: 100%; background: rgba(10, 14, 24, 0.85);
+  border: 1px solid var(--line); border-radius: 15px; color: var(--ink);
+  padding: 15px; font: inherit; margin-bottom: 12px;
+  transition: border-color .2s, box-shadow .2s;
+}
+input::placeholder, textarea::placeholder { color: #586177; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold); outline: none;
+  box-shadow: 0 0 0 3px rgba(240, 210, 140, 0.14); background: #0d1322;
+}
+label { display: block; color: var(--muted); font-size: 12px; font-weight: 500; margin: 6px 0 7px; }
+
+/* ============================================================
+   8. TOMBOL
+   ============================================================ */
+.btn {
+  width: 100%; border: 0; border-radius: 16px; padding: 16px;
+  font: inherit; font-weight: 700; letter-spacing: .4px; color: #171107;
+  background: linear-gradient(135deg, #fbe9b8 0%, #d9ad57 55%, #a9781e 100%);
+  box-shadow: 0 10px 26px rgba(198, 150, 70, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+  cursor: pointer; transition: transform .16s ease, filter .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: scale(.98); }
+.btn.g { background: rgba(26, 33, 51, 0.8); color: var(--gold); border: 1px solid var(--line); box-shadow: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ============================================================
+   9. CHIPS
+   ============================================================ */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.chip {
+  border: 1px solid var(--line); background: rgba(17, 23, 39, 0.8); color: var(--ink);
+  border-radius: 12px; padding: 10px 16px; font: inherit; font-size: 12.5px;
+  cursor: pointer; transition: .2s;
+}
+.chip.on {
+  background: linear-gradient(135deg, #fbe9b8, #c69646); color: #171107;
+  border-color: #fbe9b8; font-weight: 700;
+  box-shadow: 0 4px 14px rgba(198, 150, 70, 0.28);
+}
+
+/* ============================================================
+   10. NAV
+   ============================================================ */
+nav {
+  position: fixed; left: 14px; right: 14px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  display: flex; background: rgba(13, 18, 30, 0.82);
+  backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px);
+  border: 1px solid rgba(240, 210, 140, 0.22); border-radius: 24px;
+  padding: 8px 6px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 5;
+}
+nav button {
+  flex: 1; background: transparent; border: 0; color: var(--muted);
+  font: inherit; font-size: 11px; font-weight: 500; padding: 8px 0; border-radius: 16px;
+  display: grid; gap: 3px; justify-items: center; cursor: pointer;
+  transition: all .22s ease; position: relative;
+}
+nav button i { font-style: normal; font-size: 20px; line-height: 1.2; transition: transform .22s ease; }
+nav button.on { color: var(--gold); font-weight: 700; background: rgba(240, 210, 140, 0.10); }
+nav button.on i { transform: translateY(-1px); text-shadow: 0 0 16px rgba(240, 210, 140, 0.6); }
+
+/* ============================================================
+   11. MODAL
+   ============================================================ */
+.ov {
+  position: fixed; inset: 0; background: rgba(3, 5, 10, 0.82);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: flex; align-items: flex-end; z-index: 9;
+}
+.sh {
+  width: 100%; max-height: 88vh; overflow: auto;
+  background: radial-gradient(circle at 100% 0%, rgba(240, 210, 140, 0.12), transparent 45%), #0f1422;
+  border-radius: 30px 30px 0 0; border-top: 1px solid var(--line-strong);
+  padding: 14px 20px calc(26px + env(safe-area-inset-bottom));
+  box-shadow: 0 -22px 60px rgba(0, 0, 0, 0.6);
+  animation: slideUp .3s cubic-bezier(.16,1,.3,1);
+}
+.sh:before {
+  content: ""; display: block; width: 44px; height: 4px; border-radius: 4px;
+  background: rgba(255, 255, 255, 0.20); margin: 0 auto 18px;
+}
+@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.kv { display: flex; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.kv:last-of-type { border-bottom: none; }
+.kv span { color: var(--muted); }
+.kv b { word-break: break-all; text-align: right; font-weight: 600; }
+
+.big {
+  font-family: var(--fd); font-size: 34px;
+  background: linear-gradient(135deg, #fffbe6, var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 3px; text-align: center; margin: 20px 0; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   12. UTILITAS
+   ============================================================ */
+.msg { color: var(--muted); text-align: center; padding: 32px 12px; font-size: 13.5px; line-height: 1.6; }
+.err { color: var(--bad); }
+.ok { color: var(--ok); }
+.sp {
+  height: 28px; width: 28px; border: 2.5px solid var(--line);
+  border-top-color: var(--gold); border-radius: 50%;
+  animation: r .8s linear infinite; margin: 32px auto;
+}
+@keyframes r { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   13. ANIMASI
+   ============================================================ */
+.fade-up { animation: fadeUp .6s cubic-bezier(.16,1,.3,1) both; }
+.fade-up.d1 { animation-delay: .05s; }
+.fade-up.d2 { animation-delay: .10s; }
+.fade-up.d3 { animation-delay: .15s; }
+.fade-up.d4 { animation-delay: .20s; }
+.fade-up.d5 { animation-delay: .25s; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================================
+   14. RESPONSIF
+   ============================================================ */
+@media (max-width: 360px) {
+  main { padding: 12px 14px; }
+  header { padding-left: 14px; padding-right: 14px; }
+  .s { padding: 16px 13px; }
+  .s b { font-size: 14.5px; }
+  .bal .n { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .sp { animation-duration: 3s !important; }
+}
+
+/* ============================================================
+   PREMIUM v3 : ikon SVG + penyempurnaan tampilan
+   ============================================================ */
+::selection { background: rgba(240, 210, 140, .28); }
+html { scrollbar-width: none; } ::-webkit-scrollbar { display: none; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.ic { width: 22px; height: 22px; display: block; flex: none; }
+.ic.tk { width: 14px; height: 14px; display: inline-block; vertical-align: -2px; color: var(--gold); }
+.ic.go { width: 18px; height: 18px; color: var(--gold-2); opacity: .8; }
+.bk .ic { width: 20px; height: 20px; }
+
+/* header */
+header::after {
+  content: ""; position: absolute; left: 20px; right: 20px; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240,210,140,.35), transparent);
+}
+.me b { font-family: var(--fd); font-size: 17px; letter-spacing: .4px; }
+.av { border-radius: 50%; }
+.bal { border-radius: 28px; }
+.bal-brand { letter-spacing: 3px; font-size: 13px; }
+.bal .n { font-size: 36px; }
+.bal-foot b { padding: 4px 10px; border: 1px solid rgba(240,210,140,.3); border-radius: 20px; font-size: 10px; background: rgba(240,210,140,.06); }
+
+/* judul halaman */
+h2 { position: relative; padding-bottom: 10px; margin-bottom: 14px; }
+h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 34px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--gold), transparent); }
+
+/* kartu menu */
+.ico {
+  width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; margin-bottom: 14px;
+  color: var(--gold); position: relative; z-index: 1;
+  background: linear-gradient(145deg, rgba(240,210,140,.20), rgba(240,210,140,.04));
+  border: 1px solid rgba(240,210,140,.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 6px 16px rgba(0,0,0,.25);
+}
+.ico .ic { width: 20px; height: 20px; }
+.s { border-radius: 24px; padding: 18px 16px; }
+.s::after { content: ""; position: absolute; left: 16px; right: 16px; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(240,210,140,.5), transparent); opacity: .6; }
+.s b, .s span { position: relative; z-index: 1; }
+
+/* baris daftar */
+.row { border-radius: 20px; }
+.row:hover { border-color: rgba(240,210,140,.32); }
+.row .t b { letter-spacing: .1px; }
+
+/* tombol & input */
+.btn { border-radius: 18px; letter-spacing: .8px; text-transform: uppercase; font-size: 13px; }
+.btn.g { text-transform: none; letter-spacing: .3px; font-size: 14px; }
+.chip { border-radius: 999px; }
+input, select, textarea { border-radius: 16px; }
+
+/* navigasi bawah */
+nav { border-radius: 28px; padding: 6px; background: rgba(11, 15, 26, .86); }
+nav button { padding: 9px 0 8px; gap: 4px; border-radius: 22px; font-size: 10.5px; letter-spacing: .4px; }
+nav button i { display: grid; place-items: center; font-style: normal; }
+nav button em { font-style: normal; }
+nav button .ic { width: 22px; height: 22px; stroke-width: 1.6; }
+nav button.on { background: linear-gradient(180deg, rgba(240,210,140,.16), rgba(240,210,140,.04)); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+nav button.on .ic { stroke-width: 1.9; filter: drop-shadow(0 0 8px rgba(240,210,140,.55)); }
+nav button.on::after { content: ""; position: absolute; top: -7px; width: 22px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, #fbe9b8, #c89b4b); box-shadow: 0 0 12px rgba(240,210,140,.7); }
+
+/* ============================================================
+   ORDER AKTIF : kartu nomor, animasi menunggu OTP
+   ============================================================ */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.5); opacity: 0; } }
+@keyframes floaty { 50% { transform: translateY(-6px); } }
+@keyframes rise { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: .85; } 100% { transform: translateY(-120px); opacity: 0; } }
+@keyframes blink { 50% { opacity: .25; } }
+@keyframes dot { 0%, 60%, 100% { transform: translateY(0); opacity: .35; } 30% { transform: translateY(-5px); opacity: 1; } }
+@keyframes slot { 50% { border-color: var(--gold); box-shadow: 0 0 16px rgba(240,210,140,.28); transform: translateY(-4px); } }
+@keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+@keyframes pop { 0% { transform: scale(.4) rotateX(90deg); opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes burst { from { transform: scale(.8); opacity: .9; } to { transform: scale(2.3); opacity: 0; } }
+@keyframes fly { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; } }
+@keyframes bdg { 0% { box-shadow: 0 0 0 0 rgba(240,210,140,.55); } 70%, 100% { box-shadow: 0 0 0 7px rgba(240,210,140,0); } }
+
+nav button .bdg { position: absolute; top: 3px; left: calc(50% + 6px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9px; display: none; place-items: center; font-size: 10px; font-weight: 800; color: #171107; background: linear-gradient(135deg, #fbe9b8, #c69646); animation: bdg 1.6s ease-out infinite; }
+nav button .bdg.on { display: grid; }
+
+.oc { position: relative; border-radius: 26px; padding: 20px 18px; margin-bottom: 16px; overflow: hidden; border: 1px solid var(--line); background: #0f1422; box-shadow: 0 18px 44px rgba(0,0,0,.4); transition: border-color .4s, box-shadow .4s; }
+.oc.w::before { content: ""; position: absolute; inset: -60%; background: conic-gradient(from 0deg, transparent 0 68%, rgba(240,210,140,.6) 86%, transparent 100%); animation: spin 4s linear infinite; }
+.oc::after { content: ""; position: absolute; inset: 1px; border-radius: 25px; background: linear-gradient(155deg, #151b2e, #0d1220); }
+.oc > * { position: relative; z-index: 1; }
+.oc.ok { border-color: rgba(111,224,164,.5); box-shadow: 0 18px 44px rgba(0,0,0,.4), 0 0 40px rgba(111,224,164,.12); }
+.oc.bad { border-color: rgba(255,122,122,.4); }
+
+.oh { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.oh .sv { font-family: var(--fd); font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 7px; flex: none; font-size: 10.5px; letter-spacing: .9px; text-transform: uppercase; padding: 6px 11px; border-radius: 99px; color: var(--gold); border: 1px solid rgba(240,210,140,.3); background: rgba(240,210,140,.07); }
+.pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: blink 1.2s ease-in-out infinite; }
+.pill u { text-decoration: none; }
+.ok .pill { color: var(--ok); border-color: rgba(111,224,164,.4); background: rgba(111,224,164,.08); }
+.bad .pill { color: var(--bad); border-color: rgba(255,122,122,.4); background: rgba(255,122,122,.08); }
+.ok .pill i, .bad .pill i { animation: none; }
+
+.nm { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 16px 0 6px; padding: 12px 12px 12px 16px; border-radius: 18px; background: rgba(8,11,20,.75); border: 1px solid var(--line); }
+.nm .num { font: 700 20px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; color: #fff; word-break: break-all; }
+.cp { flex: none; width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; cursor: pointer; color: var(--gold); border: 1px solid var(--line-strong); background: rgba(240,210,140,.08); transition: .2s; }
+.cp:active { transform: scale(.9); }
+.cp.done, .btn.done { color: var(--ok); border-color: rgba(111,224,164,.55); }
+
+.stg { position: relative; height: 150px; display: grid; place-items: center; margin-top: 6px; overflow: hidden; }
+.rg { position: absolute; width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid rgba(240,210,140,.55); opacity: 0; animation: ring 3s ease-out infinite; }
+.rg:nth-child(2) { animation-delay: 1s; } .rg:nth-child(3) { animation-delay: 2s; }
+.cr { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; color: var(--gold); border: 1px solid rgba(240,210,140,.4); background: radial-gradient(circle at 30% 25%, rgba(240,210,140,.35), rgba(240,210,140,.07)); box-shadow: 0 0 30px rgba(240,210,140,.25); animation: floaty 2.6s ease-in-out infinite; position: relative; z-index: 1; }
+.pt { position: absolute; bottom: 8px; width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: 0; animation: rise 3.2s ease-in infinite; }
+
+.otp { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 6px; }
+.otp b { width: 42px; height: 52px; border-radius: 14px; display: grid; place-items: center; font: 800 24px var(--fd); color: var(--champagne); background: rgba(8,11,20,.85); border: 1px solid var(--line); }
+.w .otp b { animation: slot 1.6s ease-in-out var(--d) infinite; }
+.w .otp b::after { content: ""; width: 9px; height: 2px; border-radius: 2px; background: var(--muted); opacity: .6; }
+.ok .otp b { color: var(--ok); border-color: rgba(111,224,164,.5); background: rgba(111,224,164,.07); animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; animation-delay: calc(var(--i) * 90ms); }
+
+.wt { text-align: center; font-size: 13px; color: var(--muted); letter-spacing: .4px; }
+.wt.gd { color: var(--ok); font-weight: 600; }
+.dots { margin-left: 6px; } .dots i { display: inline-block; width: 5px; height: 5px; margin: 0 2px; border-radius: 50%; background: var(--gold); animation: dot 1.2s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+.tm { text-align: center; margin-top: 4px; font: 600 12px ui-monospace, Menlo, monospace; color: var(--gold-2); letter-spacing: 2px; }
+.bar { height: 3px; margin-top: 14px; border-radius: 3px; overflow: hidden; background: rgba(240,210,140,.12); }
+.bar::before { content: ""; display: block; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: slide 1.6s ease-in-out infinite; }
+
+.cb { position: relative; display: grid; place-items: center; height: 84px; }
+.cb::before { content: ""; position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ok); animation: burst .9s ease-out forwards; }
+.ckk { width: 60px; height: 60px; fill: none; stroke: var(--ok); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.ckk circle { stroke-dasharray: 140; stroke-dashoffset: 140; animation: draw .7s ease forwards; }
+.ckk path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw .5s .5s ease forwards; }
+.sk { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); opacity: 0; animation: fly .9s ease-out forwards; }
+
+.ac { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.ac .btn { padding: 14px 8px; font-size: 12px; }
+.btn .ic { display: inline-block; width: 17px; height: 17px; vertical-align: -4px; margin-right: 7px; }
+.chip .ic { display: inline-block; width: 15px; height: 15px; vertical-align: -3px; margin-right: 6px; }
+.chips.x { margin: 12px 0 0; }
+
+.emp { display: grid; justify-items: center; gap: 8px; text-align: center; padding: 34px 10px 22px; }
+.emp b { font: 700 17px var(--fd); } .emp span { color: var(--muted); font-size: 13px; max-width: 260px; }
+.emp .cr { margin-bottom: 10px; }
+
+.tst { position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom)); transform: translate(-50%, 18px); display: flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 99px; font-size: 13px; color: var(--ink); background: rgba(15,20,34,.96); border: 1px solid var(--line-strong); box-shadow: 0 10px 30px rgba(0,0,0,.5); opacity: 0; transition: .3s; z-index: 20; pointer-events: none; white-space: nowrap; }
+.tst.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .oc *, .oc::before { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+
+/* ============================================================
+   DEPOSIT + ADMIN
+   ============================================================ */
+.dep { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 99px; border: 1px solid rgba(240,210,140,.45); background: linear-gradient(180deg, rgba(251,233,184,.95), rgba(200,155,75,.95)); color: #171107; font: 700 12px var(--fb, inherit); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+.dep .ic { width: 15px; height: 15px; }
+.dep:active { transform: scale(.94); }
+.qrw { display: grid; place-items: center; margin: 14px 0 6px; }
+.qrw img { width: 224px; max-width: 70vw; aspect-ratio: 1; border-radius: 18px; background: #fff; padding: 10px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,.45); }
+.qrw .btn { width: 100%; }
+.stt { display: inline-block; font-size: 10.5px; letter-spacing: .6px; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.stt.berhasil { color: var(--ok); border-color: rgba(111,224,164,.4); }
+.stt.pending { color: var(--gold); border-color: rgba(240,210,140,.4); }
+.stt.batal, .stt.kadaluarsa { color: var(--bad); border-color: rgba(255,122,122,.35); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.stat { padding: 14px; border-radius: 18px; border: 1px solid var(--line); background: rgba(15,20,34,.8); }
+.stat small { display: block; color: var(--muted); font-size: 11px; letter-spacing: .5px; margin-bottom: 6px; }
+.stat b { font: 700 17px var(--fd); color: var(--champagne, var(--gold)); word-break: break-all; }
+.stat.w { grid-column: 1 / -1; }
+.lbl2 { color: var(--muted); font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; margin: 18px 0 8px; }
+textarea { width: 100%; min-height: 110px; resize: vertical; font: inherit; color: var(--ink); background: rgba(8,11,20,.75); border: 1px solid var(--line); padding: 12px 14px; }
+.sh .btn + .btn, .sh .btn.g + .btn { margin-top: 8px; }
+.btn.bad { background: rgba(255,122,122,.12); color: var(--bad); border: 1px solid rgba(255,122,122,.4); box-shadow: none; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.two .btn { margin: 0 !important; padding: 13px 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="me fade-up">
+    <div class="av" id="av">?</div>
+    <div>
+      <b id="nm">Tamu</b>
+      <small id="uid">Buka lewat Telegram</small>
+    </div>
+  </div>
+
+  <div class="bal fade-up d1">
+    <div class="bal-top">
+      <div class="bal-brand">NOKOS</div>
+      <button class="dep" id="depBtn" type="button" aria-label="Deposit"></button>
+    </div>
+    <div class="bal-body">
+      <small>Saldo</small>
+      <div class="n" id="bal">Rp 0</div>
+    </div>
+    <div class="bal-foot">
+      <span id="cardNo">•••• 0000</span>
+      <b id="srv">MEMBER</b>
+    </div>
+  </div>
+</header>
+
+<main id="app"></main>
+<nav id="nav"></nav>
+
+<script>
+const API = '/api/proxy';
+const tg = window.Telegram && Telegram.WebApp;
+const U = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+
+if (tg) {
+  tg.ready(); tg.expand();
+  try { tg.setHeaderColor('#05070d'); tg.setBackgroundColor('#05070d'); } catch (e) {}
+}
+
+if (U) {
+  const n = [U.first_name, U.last_name].filter(Boolean).join(' ');
+  nm.textContent = n || U.username || 'User';
+  uid.textContent = (U.username ? '@' + U.username + ' · ' : '') + 'ID ' + U.id;
+  av.innerHTML = U.photo_url ? '<img src="' + U.photo_url + '" alt="">' : (n[0] || '?').toUpperCase();
+  // nomor kartu unik dari ID (4 digit terakhir)
+  cardNo.textContent = '•••• ' + String(U.id).slice(-4);
+}
+
+const rp = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+
+/* ---------- IKON (SVG, tanpa emoji) ---------- */
+const IC = {
+  phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  game:'<path d="M7 8h10a4 4 0 014 4v2.5a2.5 2.5 0 01-4.3 1.7L15 14.5H9l-1.7 1.7A2.5 2.5 0 013 14.5V12a4 4 0 014-4z"/><path d="M8 10.5v3M6.5 12h3"/><path d="M15.5 11h.01M17.5 13h.01"/>',
+  grid:'<rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  chevL:'<path d="M15 5l-7 7 7 7"/>',
+  chevR:'<path d="M9 5l7 7-7 7"/>',
+  server:'<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/>',
+  inbox:'<path d="M3.5 13l2.5-8h12l2.5 8v6h-17v-6z"/><path d="M3.5 13H9a3 3 0 006 0h5.5"/>',
+  send:'<path d="M21 4L3 11l6 2.5L11.5 20 21 4z"/><path d="M9 13.5L21 4"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4V5z"/>',
+  bag:'<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6.5a3 3 0 016 0V8"/>',
+  copy:'<rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 017.5 4H15"/>',
+  pulse:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  refresh:'<path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 5v6h-6"/>',
+  shield:'<path d="M12 3l8 3v6c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V6l8-3z"/><path d="M9 12l2.2 2.2L15.5 10"/>'
+};
+Object.assign(IC, {
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  wallet:'<path d="M4 7.5A2.5 2.5 0 016.5 5H18v3"/><rect x="4" y="8" width="16" height="11" rx="2.5"/><path d="M16 13.5h.01"/>',
+  users:'<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.5 14.2c2.3.1 3.7 1.6 4 4"/>',
+  ban:'<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>',
+  horn:'<path d="M4 10v4h3l7 4V6L7 10H4z"/><path d="M17.5 9.5a4 4 0 010 5"/>',
+  list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+  cog:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/>',
+  qr:'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2"/>',
+  minus:'<path d="M5 12h14"/>'
+});
+const ic = (n, c) => '<svg class="' + (c || 'ic') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (IC[n] || '') + '</svg>';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+const $app = document.getElementById('app');
+
+async function api(path, p = {}) {
+  const q = new URLSearchParams({ path, ...p });
+  const r = await fetch(API + '?' + q, { headers: { 'x-init-data': tg ? tg.initData : '' } });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || 'Error ' + r.status);
+  return j;
+}
+
+async function saldo(manual) {
+  if (!tg || !tg.initData) { bal.textContent = '—'; uid.textContent = 'Buka lewat Telegram'; return; }
+  try {
+    const j = await api('/profile');   // ID dari Telegram -> saldo dari saldo.json
+    ME = j;
+    if (j.isAdmin && !TABS.some(t => t[0] === 'admin')) { TABS.push(['admin', 'cog', 'Admin', 'Menu Admin']); addTab(TABS[TABS.length - 1]); }
+    bal.textContent = rp(j.balance);
+    srv.textContent = j.found ? 'MEMBER' : 'BARU';
+    uid.textContent = (j.username ? '@' + j.username + ' · ' : '') + 'ID ' + j.id;
+    if (j.name) nm.textContent = j.name;
+    if (manual) toast('Saldo diperbarui');
+  } catch (e) {
+    if (/diblokir/i.test(e.message)) { srv.textContent = 'DIBLOKIR'; $app.innerHTML = '<div class="msg err">Akun kamu diblokir.</div>'; }
+    bal.textContent = '—';
+    if (/^DEBUG/.test(e.message)) { uid.textContent = e.message.slice(0, 140); toast(e.message); }
+    else if (manual) toast(e.message);
+  }
+}
+
+/* ---------- NAVIGASI ---------- */
+let stack = [];
+const TABS = [
+  ['nomor',   'phone', 'Nomor'],
+  ['aktif',   'pulse', 'Aktif', 'Order Aktif'],
+  ['lain',    'grid',  'Lainnya'],
+  ['riwayat', 'clock', 'Riwayat']
+];
+const nav = document.getElementById('nav');
+const addTab = ([k, i, l]) => {
+  const b = el('button', '', '<i>' + ic(i) + '</i><em>' + l + '</em><span class="bdg"></span>');
+  b.dataset.k = k;
+  b.onclick = () => tab(k);
+  nav.appendChild(b);
+};
+TABS.forEach(addTab);
+let ME = {};
+
+function tab(k) {
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.k === k));
+  stack = [{ t: (x => x[3] || x[2])(TABS.find(x => x[0] === k)), f: SCREENS[k] }];
+  render();
+}
+function go(t, f) { stack.push({ t, f }); render(); scrollTo(0, 0); }
+function back() { stack.pop(); render(); }
+
+async function render() {
+  const s = stack[stack.length - 1];
+  $app.innerHTML = '';
+  const top = el('div', 'top');
+  if (stack.length > 1) {
+    const b = el('button', 'bk', ic('chevL'));
+    b.setAttribute('aria-label', 'Kembali');
+    b.onclick = back;
+    top.appendChild(b);
+  }
+  top.appendChild(el('h2', 'serif', esc(s.t)));
+  $app.appendChild(top);
+  const box = el('div', 'fade-up d2');
+  box.appendChild(el('div', 'sp'));
+  $app.appendChild(box);
+  try { box.innerHTML = ''; await s.f(box); }
+  catch (e) { box.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; }
+}
+
+function sheet(build) {
+  const ov = el('div', 'ov'), sh = el('div', 'sh');
+  ov.appendChild(sh);
+  document.body.appendChild(ov);
+  const close = () => { ov.remove(); };
+  ov.onclick = e => { if (e.target === ov) close(); };
+  build(sh, close);
+  return close;
+}
+
+function list(box, items, map, search) {
+  if (!items || !items.length) { box.innerHTML = '<div class="msg">Belum ada data.</div>'; return; }
+  let inp;
+  if (search !== false && items.length > 8) { inp = el('input'); inp.placeholder = 'Cari…'; box.appendChild(inp); }
+  const wrap = el('div'); box.appendChild(wrap);
+  const draw = f => {
+    wrap.innerHTML = '';
+    items.forEach(x => {
+      const [t, sub, p, fn] = map(x);
+      if (f && !(t + ' ' + sub).toLowerCase().includes(f)) return;
+      const r = el('div', 'row',
+        '<div class="t"><b>' + esc(t) + '</b><span>' + esc(sub) + '</span></div>' +
+        (p != null ? '<div class="p">' + esc(p) + '</div>' : '') + (fn && p == null ? ic('chevR', 'ic go') : ''));
+      if (fn) r.onclick = () => fn(x);
+      wrap.appendChild(r);
+    });
+  };
+  if (inp) inp.oninput = () => draw(inp.value.trim().toLowerCase());
+  draw('');
+}
+
+const toast = m => tg && tg.showAlert ? tg.showAlert(m) : alert(m);
+function kv(o) {
+  return Object.entries(o)
+    .filter(([, v]) => v !== '' && v != null && typeof v !== 'object')
+    .map(([k, v]) => '<div class="kv"><span>' + esc(k) + '</span><b>' + esc(v) + '</b></div>')
+    .join('');
+}
+function result(title, data, statusFn) {
+  sheet((sh, close) => {
+    const draw = d => {
+      sh.innerHTML =
+        '<h2 class="serif">' + esc(title) + '</h2>' +
+        (d.otp && d.otp !== 'Waiting' ? '<div class="big serif">' + esc(d.otp) + '</div>' : '') +
+        (d.code ? '<div class="big serif">' + esc(d.code) + '</div>' : '') +
+        kv(d);
+      if (statusFn) {
+        const b = el('button', 'btn g', 'Perbarui status');
+        b.style.marginTop = '12px';
+        b.onclick = async () => { try { draw(await statusFn()); } catch (e) { toast(e.message); } };
+        sh.appendChild(b);
+      }
+      const c = el('button', 'btn', 'Tutup');
+      c.style.marginTop = '8px';
+      c.onclick = close;
+      sh.appendChild(c);
+    };
+    draw(data);
+  });
+  saldo();
+}
+
+/* ---------- NOMOR OTP ---------- */
+const SV = {
+  1: ['Operator seluler'], 2: ['Pilih provider'], 3: ['Reguler'],
+  4: ['Global (kode ISO)'], 5: ['Varian harga'], 6: ['Operator + harga'],
+  7: ['Beli ulang nomor'], 8: ['WhatsApp siap pakai'], 9: ['Multi layanan']
+};
+const NEED_OP = [1, 4, 6];
+
+async function nomor(box) {
+  const g = el('div', 'grid');
+  Object.keys(SV).forEach(k => {
+    const b = el('button', 's', '<div class="ico">' + ic('server') + '</div><b>Server ' + k + '</b><span>' + SV[k][0] + '</span>');
+    b.onclick = () => pickServer(+k);
+    g.appendChild(b);
+  });
+  box.appendChild(g);
+}
+
+function pickServer(s) {
+  if (s === 8) return go('Server 8', async c =>
+    list(c, await api('/services', { server: 8 }), x => [
+      x.service_name || x.name || x.produk || x.id,
+      'Stok ' + (x.count != null ? x.count : '-'),
+      rp(x.price),
+      () => confirmOrder({ server: 8, produk: x.produk || x.id }, x.service_name || x.name, x.price, false)
+    ])
+  );
+
+  if (s === 9) return go('Server 9 · Multi', async c => {
+    const d = await api('/services', { server: 9 });
+    const sel = new Set();
+    c.appendChild(el('div', 'msg', 'Pilih 2–5 layanan untuk 1 nomor.'));
+    const w = el('div'); c.appendChild(w);
+    const draw = () => {
+      w.innerHTML = '';
+      d.forEach(x => {
+        const id = x.produk || x.id;
+        const r = el('div', 'row',
+          '<div class="t"><b>' + (sel.has(id) ? ic('check', 'ic tk') + ' ' : '') + esc(x.service_name || x.name) + '</b>' +
+          '<span>Stok ' + (x.count != null ? x.count : '-') + '</span></div>' +
+          '<div class="p">' + rp(x.price) + '</div>');
+        r.onclick = () => { sel.has(id) ? sel.delete(id) : sel.size < 5 && sel.add(id); draw(); };
+        w.appendChild(r);
+      });
+    };
+    draw();
+    const b = el('button', 'btn', 'Beli nomor multi');
+    b.onclick = async () => {
+      if (sel.size < 2) return toast('Pilih minimal 2 layanan');
+      b.disabled = true;
+      try {
+        const r = await api('/order-multi', { produk: [...sel].join(',') });
+        saldo(); openAktif((r.orders || []).map(o => o.id));
+      } catch (e) { toast(e.message); }
+      b.disabled = false;
+    };
+    c.appendChild(b);
+  });
+
+  go('Server ' + s + ' · Negara', async c => {
+    const d = await api('/countries', { server: s });
+    list(c, d, x => [(x.flag || '') + ' ' + x.name, 'Kode ' + x.code, null, () => pickService(s, x)]);
+  });
+}
+
+function pickService(s, ct) {
+  go(ct.name, async c => {
+    const d = await api('/services', { server: s, country: ct.code });
+    list(c, d, x => [
+      x.service_name || x.name || x.produk,
+      'Stok ' + (x.count != null ? x.count : '-') + (x.rate_sms ? ' · sukses ' + x.rate_sms + '%' : ''),
+      rp(x.price),
+      () => confirmOrder({
+        server: s, country: ct.code, produk: x.produk || x.id,
+        ...(x.provider != null && x.provider !== '' ? { provider: x.provider } : {})
+      }, x.service_name || x.produk, x.price, true)
+    ]);
+  });
+}
+
+function confirmOrder(p, label, price, multi) {
+  sheet(async (sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(label) + '</h2>' + kv({ Server: p.server, Harga: rp(price) });
+    let op = 'any', qty = 1;
+    if (NEED_OP.includes(+p.server)) {
+      const lb = el('label', '', 'Operator'); lb.style.marginTop = '12px'; sh.appendChild(lb);
+      const ch = el('div', 'chips'); sh.appendChild(ch);
+      let ops = ['any'];
+      try { ops = (await api('/operators', { server: p.server, country: p.country })).operators || ops; } catch (e) {}
+      const dr = () => {
+        ch.innerHTML = '';
+        ops.forEach(o => {
+          const b = el('button', 'chip' + (o === op ? ' on' : ''), o === 'any' ? 'Acak' : o);
+          b.onclick = () => { op = o; dr(); };
+          ch.appendChild(b);
+        });
+      };
+      dr();
+    } else if (+p.server === 7) op = 'any';
+
+    if (multi) {
+      const lb = el('label', '', 'Jumlah nomor (1–5)'); lb.style.marginTop = '12px';
+      const q = el('input'); q.type = 'number'; q.min = 1; q.max = 5; q.value = 1;
+      q.oninput = () => qty = Math.min(5, Math.max(1, +q.value || 1));
+      sh.append(lb, q);
+    }
+
+    const b = el('button', 'btn', 'Beli sekarang'); b.style.marginTop = '8px';
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const q2 = { ...p };
+        if (NEED_OP.includes(+p.server) || +p.server === 7) q2.operator = op;
+        if (qty > 1) q2.total = qty;
+        const r = await api('/order', q2);
+        close(); saldo();
+        const os = r.orders || [r];
+        openAktif(os.map(o => o.id));
+      } catch (e) { toast(e.message); b.disabled = false; }
+    };
+    sh.appendChild(b);
+  });
+}
+
+const track = id => openAktif([id]);
+
+/* ---------- SUNTIK SOSMED ---------- */
+async function sosmed(box) {
+  const d = (await api('/smm-platforms')).platforms || [];
+  list(box, d, p => [
+    p.label, (p.types || []).join(', '), p.total + ' layanan',
+    () => go(p.label, async c => list(c, p.types || [], t => [t, '', null, () => smmServices(p, t)], false))
+  ]);
+}
+function smmServices(p, t) {
+  go(p.label + ' · ' + t, async c =>
+    list(c, await api('/smm-services', { platform: p.key, type: t }), x => [
+      x.name, 'Min ' + x.min + ' · Max ' + x.max + (x.refill ? ' · refill' : ''),
+      rp(x.per_1000) + '/1K', () => smmForm(x)
+    ])
+  );
+}
+function smmForm(x) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(x.name) + '</h2><label>' + esc(x.target_label || 'Target') + '</label>';
+    const tgt = el('input'); tgt.placeholder = x.target_hint || ''; sh.appendChild(tgt);
+    let qty, cm;
+    const est = el('div', 'msg'); est.style.padding = '4px';
+    if (x.is_custom) {
+      sh.appendChild(el('label', '', 'Komentar (1 baris = 1 komentar)'));
+      cm = el('textarea'); cm.rows = 4; sh.appendChild(cm);
+    } else {
+      sh.appendChild(el('label', '', 'Jumlah (' + x.min + '–' + x.max + ')'));
+      qty = el('input'); qty.type = 'number'; qty.value = x.min; sh.appendChild(qty);
+    }
+    const upd = () => {
+      const n = x.is_custom ? cm.value.split('\n').filter(Boolean).length : +qty.value;
+      est.textContent = 'Estimasi ' + rp(Math.ceil(n * x.per_1000 / 1000));
+    };
+    (qty || cm).oninput = upd; upd(); sh.appendChild(est);
+    const b = el('button', 'btn', 'Pesan sekarang');
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const p = { service_id: x.id, target: tgt.value.trim() };
+        if (x.is_custom) p.comments = cm.value; else p.quantity = qty.value;
+        const r = await api('/smm-order', p); close(); result('Pesanan dibuat', r);
+      } catch (e) { toast(e.message); b.disabled = false; }
+    };
+    sh.appendChild(b);
+  });
+}
+
+/* ---------- TOPUP GAME ---------- */
+async function topup(box) {
+  list(box, await api('/tp-games'), g => [
+    g.game, g.products + ' nominal', null,
+    () => go(g.game, async c => list(c, await api('/tp-products', { game: g.game }), x => [
+      x.name, x.flash ? 'Flash · ' + x.flash : x.code, rp(x.price), () => tpForm(x)
+    ]))
+  ]);
+}
+function tpForm(x) {
+  sheet((sh, close) => {
+    sh.innerHTML =
+      '<h2 class="serif">' + esc(x.game + ' · ' + x.name) + '</h2>' +
+      '<div class="kv"><span>Harga</span><b>' + rp(x.price) + '</b></div>' +
+      '<label style="margin-top:12px">User ID</label>';
+    const t = el('input'); t.inputMode = 'numeric'; sh.appendChild(t);
+    let z;
+    if (x.need_zone) {
+      sh.appendChild(el('label', '', 'Zone / Server ID'));
+      z = el('input'); z.inputMode = 'numeric'; sh.appendChild(z);
+    }
+    const nmx = el('div', 'msg ok'); nmx.style.padding = '2px'; sh.appendChild(nmx);
+    const P = () => ({ code: x.code, target: t.value.trim(), ...(z ? { zone: z.value.trim() } : {}) });
+    if (x.check_name) {
+      const c = el('button', 'btn g', 'Cek nama akun'); c.style.marginBottom = '8px';
+      c.onclick = async () => {
+        try { nmx.textContent = (await api('/tp-check', P())).name; }
+        catch (e) { nmx.innerHTML = '<span class="err">' + esc(e.message) + '</span>'; }
+      };
+      sh.appendChild(c);
+    }
+    const b = el('button', 'btn', 'Topup sekarang');
+    b.onclick = async () => {
+      b.disabled = true;
+      try { const r = await api('/tp-order', P()); close(); result('Topup diproses', r); }
+      catch (e) { toast(e.message); b.disabled = false; }
+    };
+    sh.appendChild(b);
+  });
+}
+
+/* ---------- LAINNYA ---------- */
+async function lain(box) {
+  const items = [
+    ['Suntik & Topup', 'Sosmed dan topup game', suntikTopup],
+    ['Gmail siap pakai', 'Akun Gmail + password', gmail],
+    ['Sewa email', 'Kode verifikasi situs', mailRent],
+    ['Telegram siap pakai', 'Kode lewat email', () => ready('telegram')],
+    ['WhatsApp siap pakai V2', 'Kode lewat email', () => ready('whatsapp')],
+    ['Shopee siap pakai', 'Akun Shopee baru', shopee],
+    ['OTP via WhatsApp', 'Shopee, Gojek, Dana, dll', otpwa]
+  ];
+  const g = el('div', 'grid');
+  items.forEach(([t, s, f], i) => {
+    const b = el('button', 's', '<div class="ico">' + ic(['trend','mail','inbox','send','chat','bag','shield'][i]) + '</div><b style="font-size:15px">' + t + '</b><span>' + s + '</span>');
+    b.onclick = f; g.appendChild(b);
+  });
+  box.appendChild(g);
+}
+
+const suntikTopup = () => go('Suntik & Topup', async c => {
+  const g = el('div', 'grid');
+  [['Suntik Sosmed', 'Followers, like, views', 'trend', sosmed],
+   ['Topup Game', 'Diamond, voucher, saldo', 'game', topup]].forEach(([t, d, i, f]) => {
+    const b = el('button', 's', '<div class="ico">' + ic(i) + '</div><b style="font-size:15px">' + t + '</b><span>' + d + '</span>');
+    b.onclick = () => go(t, f); g.appendChild(b);
+  });
+  c.appendChild(g);
+});
+
+const gmail = () => go('Gmail', async c => {
+  const d = await api('/gmail-stock');
+  c.innerHTML = kv({ Stok: d.stock, Harga: rp(d.price), 'Maks per order': d.max_qty });
+  const q = el('input'); q.type = 'number'; q.min = 1; q.max = d.max_qty; q.value = 1; q.style.marginTop = '12px';
+  const b = el('button', 'btn', 'Beli Gmail');
+  b.onclick = async () => {
+    try {
+      const r = await api('/gmail-order', { qty: q.value });
+      (Array.isArray(r) ? r : [r]).forEach(o => result('Akun Gmail', o));
+    } catch (e) { toast(e.message); }
+  };
+  c.append(q, b);
+});
+
+const mailRent = () => go('Sewa email', async c => {
+  c.appendChild(el('label', '', 'Situs tujuan (contoh tiktok.com)'));
+  const s = el('input'); s.placeholder = 'tiktok.com'; c.appendChild(s);
+  const b = el('button', 'btn', 'Lihat domain & harga');
+  const w = el('div'); w.style.marginTop = '12px'; c.append(b, w);
+  b.onclick = async () => {
+    try {
+      w.innerHTML = '';
+      list(w, await api('/mail-domains', { site: s.value.trim() }), d => [
+        d.domain, 'Stok ' + d.stock, rp(d.price),
+        async () => {
+          try {
+            const r = await api('/mail-rent', { site: s.value.trim(), domain: d.domain });
+            result('Email disewa', r, () => api('/status', { id: r.id }));
+          } catch (e) { toast(e.message); }
+        }
+      ], false);
+    } catch (e) { toast(e.message); }
+  };
+});
+
+const ready = app => go(app === 'telegram' ? 'Telegram siap pakai' : 'WhatsApp siap pakai V2', async c => {
+  const d = await api('/tg-countries', { app });
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.countries, x => [
+    x.name, 'Stok ' + x.stock, rp(x.price),
+    async () => {
+      try { const r = await api('/tg-buy', { app, country: x.country }); track(r.id); saldo(); }
+      catch (e) { toast(e.message); }
+    }
+  ]);
+});
+
+const shopee = () => go('Shopee siap pakai', async c => {
+  const d = await api('/shopee-countries');
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.countries, x => [
+    x.name, 'Stok ' + x.stock, rp(x.price),
+    async () => {
+      try { const r = await api('/shopee-buy', { country: x.country }); result('Akun Shopee', r, () => api('/shopee-code', { id: r.id })); }
+      catch (e) { toast(e.message); }
+    }
+  ]);
+});
+
+const otpwa = () => go('OTP via WhatsApp', async c => {
+  const d = await api('/otpwa-services');
+  if (!d.on) return c.innerHTML = '<div class="msg">Sedang maintenance.</div>';
+  list(c, d.services, x => [
+    x.name, 'Stok ' + x.stock + ' · sukses ' + x.success_rate + '%', rp(x.price),
+    () => otpwaBuy(x)
+  ]);
+});
+
+function otpwaBuy(x) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(x.name) + '</h2>';
+    let price = x.offers && x.offers[0] ? x.offers[0].price : x.price;
+    const ch = el('div', 'chips');
+    (x.offers || []).forEach(o => {
+      const b = el('button', 'chip' + (o.price === price ? ' on' : ''), rp(o.price) + ' · ' + o.stock);
+      b.onclick = () => { price = o.price; [...ch.children].forEach(k => k.classList.toggle('on', k === b)); };
+      ch.appendChild(b);
+    });
+    sh.appendChild(ch);
+    let nm2;
+    if (x.free_name) { nm2 = el('input'); nm2.placeholder = 'Nama aplikasi'; sh.appendChild(nm2); }
+    const b = el('button', 'btn', 'Beli kode');
+    b.onclick = async () => {
+      b.disabled = true;
+      try {
+        const r = await api('/otpwa-buy', { service_id: x.id, price, ...(nm2 ? { app_name: nm2.value } : {}) });
+        close();
+        const get = async () => (await api('/otpwa-orders')).find(o => o.id === r.id) || r;
+        sheet((s2, c2) => {
+          const st = el('div'); s2.appendChild(st);
+          const draw = o => {
+            st.innerHTML = '<h2 class="serif">' + esc(o.app) + '</h2>' +
+              (o.code ? '<div class="big serif">' + esc(o.code) + '</div>' : '') +
+              kv({ Status: o.status, Nomor: o.number, Link: o.link });
+          };
+          draw(r);
+          const bt = (t, fn) => {
+            const k = el('button', 'btn g', t); k.style.marginTop = '8px';
+            k.onclick = async () => { try { await fn(); draw(await get()); } catch (e) { toast(e.message); } };
+            s2.appendChild(k);
+          };
+          bt('Perbarui status', async () => {});
+          bt('Minta kode', () => api('/otpwa-code', { id: r.id }));
+          bt('Batalkan', () => api('/otpwa-cancel', { id: r.id, reason: 'changed_mind' }));
+          const cl = el('button', 'btn', 'Tutup'); cl.style.marginTop = '8px'; cl.onclick = c2;
+          s2.appendChild(cl);
+        });
+        saldo();
+      } catch (e) { toast(e.message); b.disabled = false; }
+    };
+    sh.appendChild(b);
+  });
+}
+
+/* ---------- RIWAYAT ---------- */
+async function riwayat(box) {
+  const src = {
+    Nomor: ['/history', o => [o.service_name, o.number + ' · ' + o.status, o.otp && o.otp !== 'Waiting' ? o.otp : rp(o.price), () => track(o.id)]],
+    Sosmed: ['/smm-orders', o => [o.service || 'Order ' + String(o.id).slice(0, 6), o.status + ' · ' + o.quantity, rp(o.price), () => result('Sosmed', o)]],
+    Topup: ['/tp-orders', o => [o.product + ' · ' + o.service, o.status + ' · ' + o.target, rp(o.price), () => result('Topup', o)]],
+    Email: ['/mail-orders', o => [o.email, o.status + (o.code ? ' · ' + o.code : ''), rp(o.price), () => result('Email', o)]],
+    WA: ['/otpwa-orders', o => [o.app, o.status + ' · ' + o.number, o.code || rp(o.price), () => result('OTP WA', o)]]
+  };
+  const ch = el('div', 'chips'), w = el('div'); box.append(ch, w);
+  const load = async k => {
+    [...ch.children].forEach(b => b.classList.toggle('on', b.textContent === k));
+    w.innerHTML = '<div class="sp"></div>';
+    try {
+      const d = await api(src[k][0], { limit: 30 });
+      w.innerHTML = '';
+      list(w, d, src[k][1], false);
+    } catch (e) {
+      w.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>';
+    }
+  };
+  Object.keys(src).forEach(k => {
+    const b = el('button', 'chip', k);
+    b.onclick = () => load(k);
+    ch.appendChild(b);
+  });
+  load('Nomor');
+}
+
+/* ---------- ORDER AKTIF ---------- */
+const ACT_KEY = 'act_v1_' + (U ? U.id : 0), ACT_TTL = 60 * 60 * 1000;
+const actLoad = () => { try { return JSON.parse(localStorage.getItem(ACT_KEY) || '[]').filter(a => Date.now() - a.t < ACT_TTL); } catch (e) { return []; } };
+const actSave = () => { try { localStorage.setItem(ACT_KEY, JSON.stringify(ACTS.slice(0, 20))); } catch (e) {} };
+let ACTS = actLoad(), REFRESH = null, FOCUS = false;
+function badge() {
+  const n = ACTS.filter(a => !a.d).length, b = nav.querySelector('[data-k=aktif] .bdg');
+  if (b) { b.textContent = n; b.classList.toggle('on', n > 0); }
+}
+function openAktif(ids) {
+  ids.forEach(id => { if (!ACTS.some(a => a.id == id)) ACTS.unshift({ id, t: Date.now() }); });
+  actSave(); badge(); FOCUS = true; tab('aktif');
+}
+function note(m, i) {
+  let t = document.querySelector('.tst');
+  if (!t) { t = el('div', 'tst'); document.body.appendChild(t); }
+  t.innerHTML = ic(i || 'check', 'ic tk') + esc(m); t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 1800);
+}
+async function copy(txt, label, btn) {
+  try { await navigator.clipboard.writeText(txt); }
+  catch (e) { const a = el('textarea'); a.value = txt; a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); } catch (e2) {} a.remove(); }
+  try { tg.HapticFeedback.impactOccurred('light'); } catch (e) {}
+  note(label + ' disalin');
+  if (btn) { btn.classList.add('done'); setTimeout(() => btn.classList.remove('done'), 1400); }
+}
+const isOtp = d => !!(d && d.otp && d.otp !== 'Waiting');
+const isBad = d => !!(d && /cancel|expire|fail|refund|timeout|batal/i.test(String(d.status || '')));
+const mmss = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+
+const WAIT = '<div class="stg"><i class="rg"></i><i class="rg"></i><i class="rg"></i><div class="cr">' + ic('mail') + '</div>' +
+  [10, 26, 42, 58, 74, 90].map((l, i) => '<i class="pt" style="left:' + l + '%;animation-delay:' + (i * .5) + 's"></i>').join('') + '</div>' +
+  '<div class="otp">' + [0, 1, 2, 3, 4, 5].map(i => '<b style="--d:' + (i * .12) + 's"></b>').join('') + '</div>' +
+  '<div class="wt">Menunggu OTP<span class="dots"><i></i><i></i><i></i></span></div><div class="tm">00:00</div><div class="bar"></div>';
+
+function gotHtml(otp) {
+  const sk = [[-64, -38], [64, -42], [-84, 8], [84, 12], [-32, -70], [36, -66], [0, -78]]
+    .map(([x, y], i) => '<i class="sk" style="--x:' + x + 'px;--y:' + y + 'px;animation-delay:' + (i * 40) + 'ms"></i>').join('');
+  return '<div class="cb">' + sk + '<svg class="ckk" viewBox="0 0 52 52"><circle cx="26" cy="26" r="22"/><path d="M16 27l7 7 13-14"/></svg></div>' +
+    '<div class="otp">' + [...String(otp)].map((ch, i) => '<b style="--i:' + i + '">' + esc(ch) + '</b>').join('') + '</div>' +
+    '<div class="wt gd">OTP diterima</div>';
+}
+
+function buildActions(c) {
+  const id = c._id, d = c._d, ac = c.querySelector('.ac'), x = c.querySelector('.chips');
+  ac.innerHTML = ''; x.innerHTML = '';
+  const b1 = el('button', 'btn g', ic('copy') + 'Salin nomor'); b1.onclick = () => c._d.number && copy(c._d.number, 'Nomor', b1);
+  const b2 = el('button', 'btn', ic('check') + 'Salin OTP'); b2.disabled = !isOtp(d); b2.onclick = () => copy(c._d.otp, 'OTP', b2);
+  ac.append(b1, b2);
+  const add = (t, i, fn) => {
+    const b = el('button', 'chip', ic(i, 'ic ch') + t);
+    b.onclick = async () => { try { await fn(); } catch (e) { toast(e.message); } };
+    x.appendChild(b);
+  };
+  if (!isBad(d)) {
+    if (d.can_resend) add('Kirim ulang', 'refresh', async () => paint(c, await api('/resend', { id })));
+    if (String(d.server) === '8' || d.wa_ready !== undefined) add('Minta kode', 'send', async () => { await api('/request-code', { id }); note('Kode diminta, tunggu ±3 menit'); });
+  }
+  if (!isOtp(d) && !isBad(d) && (d.status === 'pending' || d.status === 'success'))
+    add('Batalkan', 'x', async () => { const r = await api('/cancel', { id }); note('Status: ' + (r.status || 'dibatalkan'), 'x'); saldo(); REFRESH && REFRESH(); });
+}
+
+function paint(c, d) {
+  c._d = d;
+  const st = isOtp(d) ? 'ok' : isBad(d) ? 'bad' : 'w';
+  c.querySelector('.sv').textContent = d.service_name || 'Pesanan nomor';
+  c.querySelector('.num').textContent = d.number || '—';
+  if (st !== c._st) {
+    c._st = st; c.className = 'oc ' + st;
+    c.querySelector('.pill u').textContent = st === 'ok' ? 'OTP diterima' : st === 'bad' ? (d.status || 'Dibatalkan') : 'Menunggu OTP';
+    c.querySelector('.body').innerHTML = st === 'ok' ? gotHtml(d.otp) : st === 'bad' ? '<div class="msg">Pesanan ' + esc(d.status || 'dibatalkan') + '.</div>' : WAIT;
+    if (st === 'ok') { try { tg.HapticFeedback.notificationOccurred('success'); } catch (e) {} }
+  }
+  const sig = st + '|' + !!d.can_resend + '|' + d.status;
+  if (sig !== c._sig) { c._sig = sig; buildActions(c); }
+}
+
+async function aktif(box) {
+  if (!ACTS.length) {
+    box.innerHTML = '<div class="emp"><div class="cr">' + ic('pulse') + '</div><b>Belum ada order aktif</b><span>Nomor yang kamu beli muncul di sini, OTP masuk otomatis.</span></div>';
+    const b = el('button', 'btn', 'Beli nomor'); b.onclick = () => tab('nomor'); box.appendChild(b);
+    return;
+  }
+  const cards = {};
+  ACTS.forEach(a => {
+    const c = el('div', 'oc w fade-up');
+    c.innerHTML = '<div class="oh"><b class="sv">Memuat…</b><span class="pill"><i></i><u>Menunggu OTP</u></span></div>' +
+      '<div class="nm"><span class="num">—</span><button class="cp" aria-label="Salin nomor">' + ic('copy') + '</button></div>' +
+      '<div class="body"></div><div class="ac"></div><div class="chips x"></div>';
+    c.querySelector('.cp').onclick = e => c._d && c._d.number && copy(c._d.number, 'Nomor', e.currentTarget);
+    c._id = a.id; c._t = a.t; c._st = ''; cards[a.id] = c; box.appendChild(c);
+  });
+  if (FOCUS) { FOCUS = false; setTimeout(() => window.scrollTo({ top: Math.max(0, box.offsetTop + box.parentElement.offsetTop - 70), behavior: 'smooth' }), 250); }
+  let busy = false;
+  const tick = async first => {
+    if (busy || (document.hidden && !first)) return;
+    busy = true;
+    for (const a of ACTS) {
+      if (a.d && !first) continue;
+      try {
+        const d = await api('/status', { id: a.id });
+        if (cards[a.id] && cards[a.id].isConnected) paint(cards[a.id], d);
+        if ((isOtp(d) || isBad(d)) && !a.d) { a.d = 1; actSave(); badge(); if (isOtp(d)) saldo(); }
+      } catch (e) {}
+    }
+    busy = false;
+  };
+  REFRESH = () => tick(true);
+  tick(true);
+  const poll = setInterval(() => { if (!box.isConnected) return clearInterval(poll); tick(false); }, 4000);
+  const clk = setInterval(() => {
+    if (!box.isConnected) return clearInterval(clk);
+    box.querySelectorAll('.oc.w').forEach(c => { const t = c.querySelector('.tm'); if (t) t.textContent = mmss(Date.now() - c._t); });
+  }, 1000);
+}
+
+
+/* ============================================================
+   DEPOSIT (QRIS Ditznesia)
+   ============================================================ */
+const DST = { pending: 'Menunggu bayar', berhasil: 'Berhasil', batal: 'Dibatalkan', kadaluarsa: 'Kedaluwarsa' };
+const stt = s => '<span class="stt ' + esc(s) + '">' + esc(DST[s] || s) + '</span>';
+const fmtT = t => { const d = new Date(t); return isNaN(d) ? String(t || '') : d.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
+const confirmBox = (m, fn) => { if (tg && tg.showConfirm) tg.showConfirm(m, ok => ok && fn()); else if (confirm(m)) fn(); };
+const buzz = t => { try { tg.HapticFeedback.notificationOccurred(t); } catch (e) {} };
+
+function payDep(d0) {
+  let d = d0, timer, clock;
+  sheet((sh, close) => {
+    const stop = () => { clearInterval(timer); clearInterval(clock); };
+    const gone = () => !document.body.contains(sh);
+    const draw = () => {
+      const pend = d.status === 'pending', okk = d.status === 'berhasil';
+      sh.innerHTML = '<h2 class="serif">' + (okk ? 'Deposit berhasil' : pend ? 'Bayar via QRIS' : 'Deposit') + '</h2>';
+      if (okk) {
+        sh.insertAdjacentHTML('beforeend', '<div class="cb"><svg class="ckk" viewBox="0 0 52 52"><circle cx="26" cy="26" r="22"/><path d="M16 27l7 7 13-14"/></svg></div>' +
+          '<div class="big serif">+ ' + rp(d.total_diterima || d.nominal) + '</div>');
+      } else {
+        sh.insertAdjacentHTML('beforeend', '<div class="big serif">' + rp(d.total_bayar || d.nominal) + '</div>');
+      }
+      if (pend && d.qr_link) {
+        const w = el('div', 'qrw');
+        if (/^https?:/i.test(d.qr_link)) {
+          const im = el('img'); im.alt = 'QRIS'; im.src = d.qr_link;
+          im.onerror = () => { w.innerHTML = ''; const b = el('button', 'btn g', ic('qr') + 'Buka halaman QRIS'); b.onclick = () => (tg && tg.openLink ? tg.openLink(d.qr_link) : window.open(d.qr_link, '_blank')); w.appendChild(b); };
+          w.appendChild(im);
+        } else {
+          const b = el('button', 'btn g', ic('copy') + 'Salin kode QRIS'); b.onclick = () => copy(d.qr_link, 'Kode QRIS', b); w.appendChild(b);
+        }
+        sh.appendChild(w);
+      }
+      if (pend) sh.insertAdjacentHTML('beforeend', '<div class="tm" id="dtm">--:--</div><div class="wt">Bayar tepat sesuai nominal di atas<span class="dots"><i></i><i></i><i></i></span></div>');
+      sh.insertAdjacentHTML('beforeend', kv({
+        Status: DST[d.status] || d.status,
+        'Total bayar': rp(d.total_bayar || d.nominal),
+        'Saldo masuk': rp(d.total_diterima || d.nominal),
+        'ID': d.id,
+        Dibuat: d.created_at
+      }));
+      if (pend) {
+        const cp = el('button', 'btn g', ic('copy') + 'Salin nominal'); cp.style.marginTop = '12px';
+        cp.onclick = () => copy(String(d.total_bayar || d.nominal), 'Nominal', cp);
+        const ck = el('button', 'btn', ic('refresh') + 'Cek pembayaran');
+        ck.onclick = async () => { ck.disabled = true; try { await check(true); } catch (e) { toast(e.message); } ck.disabled = false; };
+        const cn = el('button', 'btn bad', ic('x') + 'Batalkan deposit');
+        cn.onclick = () => confirmBox('Batalkan deposit ini?', async () => {
+          try { d = await api('/deposit/cancel', { id: d.id }); stop(); draw(); note('Deposit dibatalkan', 'x'); }
+          catch (e) { toast(e.message); }
+        });
+        sh.append(cp, ck, cn);
+      }
+      const c = el('button', 'btn' + (pend ? ' g' : ''), 'Tutup'); c.style.marginTop = '8px';
+      c.onclick = () => { stop(); close(); };
+      sh.appendChild(c);
+    };
+    const check = async manual => {
+      const n = await api('/deposit/status', { id: d.id });
+      const was = d.status; d = n;
+      if (d.status !== 'pending') { stop(); draw(); saldo(); if (d.status === 'berhasil') buzz('success'); }
+      else if (manual) note('Belum ada pembayaran', 'clock');
+      return was !== d.status;
+    };
+    draw();
+    if (d.status === 'pending') {
+      timer = setInterval(async () => { if (gone()) return stop(); try { await check(false); } catch (e) {} }, 4000);
+      clock = setInterval(() => {
+        if (gone()) return stop();
+        const t = sh.querySelector('#dtm'); if (!t) return;
+        const left = Number(d.expires_at_ms) - Date.now();
+        t.textContent = left > 0 ? 'Berlaku ' + mmss(left) : 'Waktu habis';
+      }, 1000);
+    }
+  });
+}
+
+const deposit = () => go('Deposit', async c => {
+  const min = ME.minDeposit || 1000, max = ME.maxDeposit || 5000000;
+  c.insertAdjacentHTML('beforeend', kv({ 'Saldo sekarang': rp(ME.balance), 'Minimal': rp(min), 'Maksimal': rp(max) }));
+  const l = el('label', '', 'Nominal deposit (Rp)'); l.style.marginTop = '14px';
+  const inp = el('input'); inp.type = 'number'; inp.inputMode = 'numeric'; inp.placeholder = 'contoh 20000'; inp.min = min; inp.max = max;
+  const ch = el('div', 'chips'); ch.style.marginTop = '10px';
+  [10000, 20000, 50000, 100000, 200000].filter(n => n >= min && n <= max).forEach(n => {
+    const b = el('button', 'chip', rp(n)); b.onclick = () => { inp.value = n; [...ch.children].forEach(x => x.classList.toggle('on', x === b)); };
+    ch.appendChild(b);
+  });
+  const go2 = el('button', 'btn', ic('qr') + 'Buat QRIS');
+  go2.onclick = async () => {
+    const n = Math.floor(Number(inp.value));
+    if (!(n >= min && n <= max)) return toast('Nominal deposit ' + rp(min) + ' – ' + rp(max));
+    go2.disabled = true;
+    try { const d = await api('/deposit/create', { nominal: n }); payDep(d); loadH(); }
+    catch (e) { toast(e.message); }
+    go2.disabled = false;
+  };
+  c.append(l, inp, ch, go2);
+  c.appendChild(el('div', 'lbl2', 'Riwayat deposit'));
+  const hw = el('div'); c.appendChild(hw);
+  async function loadH() {
+    try {
+      const h = await api('/deposit/history', { limit: 20 });
+      hw.innerHTML = '';
+      if (!h.length) { hw.innerHTML = '<div class="msg">Belum ada deposit.</div>'; return; }
+      h.forEach(d => {
+        const r = el('div', 'row', '<div class="t"><b>' + rp(d.nominal) + '</b><span>' + esc(String(d.created_at || '').slice(0, 16)) + '</span></div><div class="p">' + stt(d.status) + '</div>');
+        r.onclick = async () => {
+          if (d.status === 'pending') { try { payDep(await api('/deposit/status', { id: d.id })); } catch (e) { toast(e.message); } }
+          else payDep(d);
+        };
+        hw.appendChild(r);
+      });
+    } catch (e) { hw.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; }
+  }
+  loadH();
+});
+depBtn.innerHTML = ic('plus') + 'Deposit';
+depBtn.onclick = e => { e.stopPropagation(); if (!tg || !tg.initData) return toast('Buka lewat Telegram'); deposit(); };
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+async function adm(action, body) {
+  const r = await fetch('/api/admin', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-init-data': tg ? tg.initData : '' },
+    body: JSON.stringify({ action, ...(body || {}) })
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || 'Error ' + r.status);
+  return j;
+}
+
+// form kecil dalam sheet
+function ask(title, fields, label, fn, danger) {
+  sheet((sh, close) => {
+    sh.innerHTML = '<h2 class="serif">' + esc(title) + '</h2>';
+    const els = {};
+    fields.forEach(f => {
+      if (f.label) sh.appendChild(el('label', '', esc(f.label)));
+      const i = el(f.area ? 'textarea' : 'input');
+      if (!f.area) { i.type = f.type || 'text'; if (f.type === 'number') i.inputMode = 'numeric'; }
+      i.placeholder = f.ph || ''; if (f.val != null) i.value = f.val;
+      els[f.k] = i; sh.appendChild(i);
+    });
+    const b = el('button', 'btn' + (danger ? ' bad' : ''), esc(label)); b.style.marginTop = '14px';
+    b.onclick = async () => {
+      const v = {}; Object.entries(els).forEach(([k, i]) => v[k] = i.value.trim());
+      b.disabled = true;
+      try { await fn(v, close); } catch (e) { toast(e.message); }
+      b.disabled = false;
+    };
+    const x = el('button', 'btn g', 'Batal'); x.onclick = close;
+    sh.append(b, x);
+  });
+}
+
+async function adminHome(box) {
+  const st = await adm('stats');
+  const g = el('div', 'stats');
+  const S = (k, v, w) => '<div class="stat' + (w ? ' w' : '') + '"><small>' + esc(k) + '</small><b>' + esc(v) + '</b></div>';
+  g.innerHTML =
+    S('Saldo Ditznesia (API)', '…', 1).replace('<b>', '<b id="apib">') +
+    S('Pengguna', st.users) + S('Diblokir', st.banned) +
+    S('Total saldo user', rp(st.totalSaldo)) + S('Total deposit', rp(st.totalDeposit)) +
+    S('Deposit hari ini', rp(st.depositToday) + ' · ' + st.depositTodayCount + 'x') + S('Deposit pending', st.pendingDeposit) +
+    S('Order hari ini', st.orderToday) + S('Omzet hari ini', rp(st.spentToday));
+  box.appendChild(g);
+  const loadApi = async () => {
+    const t = g.querySelector('#apib');
+    try { const a = await adm('api'); t.textContent = rp(a.balance) + (a.name ? ' · ' + a.name : ''); }
+    catch (e) { t.textContent = 'Gagal: ' + e.message; }
+  };
+  loadApi();
+  g.querySelector('.stat.w').onclick = () => { g.querySelector('#apib').textContent = '…'; loadApi(); };
+
+  const grid = el('div', 'grid');
+  [['Pengguna', 'Cari, saldo, blokir', 'users', admUsers],
+   ['Deposit', 'Semua deposit QRIS', 'wallet', admDeposits],
+   ['Order', 'Order & omzet', 'bag', admOrders],
+   ['Broadcast', 'Kirim pesan ke semua', 'horn', admBroadcast],
+   ['Log', 'Aktivitas admin & sistem', 'list', admLogs],
+   ['Tambah saldo', 'Langsung via ID', 'plus', () => ask('Tambah saldo', [
+      { k: 'id', label: 'ID Telegram', type: 'number', ph: '7523570109' },
+      { k: 'amount', label: 'Nominal (Rp)', type: 'number', ph: '10000' },
+      { k: 'note', label: 'Catatan (opsional)', ph: 'bonus / koreksi' }
+    ], 'Tambah', async (v, close) => { const r = await adm('addsaldo', v); close(); toast('Saldo ' + rp(r.before) + ' → ' + rp(r.after)); })]
+  ].forEach(([t, s, i, f]) => {
+    const b = el('button', 's', '<div class="ico">' + ic(i) + '</div><b style="font-size:15px">' + t + '</b><span>' + s + '</span>');
+    b.onclick = () => (f === admUsers || f === admDeposits || f === admOrders || f === admBroadcast || f === admLogs) ? go(t, f) : f();
+    grid.appendChild(b);
+  });
+  box.appendChild(grid);
+}
+
+const admUsers = async box => {
+  const inp = el('input'); inp.placeholder = 'Cari ID / nama / @username'; box.appendChild(inp);
+  const ch = el('div', 'chips'); ch.style.marginTop = '10px'; box.appendChild(ch);
+  const wrap = el('div'); box.appendChild(wrap);
+  let sort = 'saldo', flt = '', tm;
+  const FL = [['Saldo', 'saldo', ''], ['Terbaru', 'new', ''], ['Deposit', 'deposit', ''], ['Order', 'order', ''], ['Diblokir', 'saldo', 'banned']];
+  FL.forEach(([t, s, f], i) => {
+    const b = el('button', 'chip' + (i === 0 ? ' on' : ''), t);
+    b.onclick = () => { sort = s; flt = f; [...ch.children].forEach(x => x.classList.toggle('on', x === b)); load(); };
+    ch.appendChild(b);
+  });
+  async function load() {
+    wrap.innerHTML = '<div class="sp"></div>';
+    try {
+      const q = inp.value.trim();
+      const d = await adm('users', { q, sort, filter: flt, limit: 50 });
+      wrap.innerHTML = '<div class="lbl2">' + d.total + ' pengguna' + (d.total > d.items.length ? ' (50 teratas)' : '') + '</div>';
+      if (/^\d{5,15}$/.test(q) && !d.items.some(u => u.id === q)) {
+        const r = el('div', 'row', '<div class="t"><b>Buka ID ' + esc(q) + '</b><span>Belum terdaftar · bisa diberi saldo</span></div>' + ic('chevR', 'ic go'));
+        r.onclick = () => userSheet(q); wrap.appendChild(r);
+      }
+      d.items.forEach(u => {
+        const r = el('div', 'row',
+          '<div class="t"><b>' + esc(u.name || ('ID ' + u.id)) + (u.banned ? ' · DIBLOKIR' : '') + '</b><span>' + (u.username ? '@' + esc(u.username) + ' · ' : '') + u.id + '</span></div><div class="p">' + rp(u.saldo) + '</div>');
+        r.onclick = () => userSheet(u.id); wrap.appendChild(r);
+      });
+      if (!d.items.length && !wrap.querySelector('.row')) wrap.insertAdjacentHTML('beforeend', '<div class="msg">Tidak ada data.</div>');
+    } catch (e) { wrap.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; }
+  }
+  inp.oninput = () => { clearTimeout(tm); tm = setTimeout(load, 350); };
+  load();
+};
+
+function userSheet(id) {
+  sheet(async (sh, close) => {
+    const draw = async () => {
+      let d;
+      try { d = await adm('user', { id }); } catch (e) { sh.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; return; }
+      const u = d.user;
+      sh.innerHTML = '<h2 class="serif">' + esc(u.name || ('ID ' + u.id)) + '</h2>' +
+        '<div class="big serif">' + rp(u.saldo) + '</div>' +
+        kv({ ID: u.id, Username: u.username ? '@' + u.username : '', Status: u.banned ? 'DIBLOKIR' : d.found ? 'Aktif' : 'Belum terdaftar', Role: d.isAdmin ? 'Admin' : '',
+          'Total deposit': rp(u.totalDeposit), 'Total order': u.totalOrder, 'Total belanja': rp(u.totalSpent), Bergabung: u.joinedAt ? fmtT(u.joinedAt) : '' });
+      if (d.deposits.length) {
+        sh.insertAdjacentHTML('beforeend', '<div class="lbl2">Deposit terakhir</div>');
+        d.deposits.slice(0, 5).forEach(x => sh.insertAdjacentHTML('beforeend', '<div class="kv"><span>' + esc(String(x.created_at || '').slice(0, 16)) + ' · ' + esc(DST[x.status] || x.status) + '</span><b>' + rp(x.nominal) + '</b></div>'));
+      }
+      if (d.orders.length) {
+        sh.insertAdjacentHTML('beforeend', '<div class="lbl2">Order terakhir</div>');
+        d.orders.slice(0, 5).forEach(x => sh.insertAdjacentHTML('beforeend', '<div class="kv"><span>' + esc(fmtT(x.t)) + ' · ' + esc(x.ep) + (x.refunded ? ' · refund' : '') + '</span><b>' + rp(x.cost) + '</b></div>'));
+      }
+      const mk = (t, i, cls, fn) => { const b = el('button', 'btn ' + (cls || 'g'), ic(i) + t); b.onclick = fn; return b; };
+      const rows = el('div', 'two');
+      rows.append(
+        mk('Tambah saldo', 'plus', '', () => money('Tambah saldo', 'addsaldo', 'Tambah')),
+        mk('Kurangi saldo', 'minus', '', () => money('Kurangi saldo', 'subsaldo', 'Kurangi')),
+        mk('Set saldo', 'wallet', '', () => money('Set saldo (jadi tepat sekian)', 'setsaldo', 'Simpan')),
+        mk('Kirim pesan', 'send', '', () => ask('Pesan ke ' + (u.name || u.id), [{ k: 'text', area: 1, ph: 'Tulis pesan…' }], 'Kirim', async (v, c2) => {
+          const r = await adm('message', { id, text: v.text }); c2(); toast(r.ok ? 'Pesan terkirim' : 'Gagal kirim (user belum /start bot?)');
+        }))
+      );
+      sh.appendChild(rows);
+      if (!d.isAdmin) {
+        const bb = u.banned
+          ? mk('Buka blokir', 'check', 'g', () => confirmBox('Buka blokir user ini?', async () => { try { await adm('unban', { id }); note('Blokir dibuka'); draw(); } catch (e) { toast(e.message); } }))
+          : mk('Blokir user', 'ban', 'bad', () => confirmBox('Blokir user ini? Dia tidak bisa order/deposit.', async () => { try { await adm('ban', { id }); note('User diblokir', 'x'); draw(); } catch (e) { toast(e.message); } }));
+        bb.style.marginTop = '8px'; sh.appendChild(bb);
+      }
+      const c = el('button', 'btn', 'Tutup'); c.style.marginTop = '8px'; c.onclick = close; sh.appendChild(c);
+    };
+    const money = (title, act, label) => ask(title, [
+      { k: 'amount', label: 'Nominal (Rp)', type: 'number', ph: '10000' },
+      { k: 'note', label: 'Catatan (opsional, ikut dikirim ke user)', ph: 'bonus / koreksi' }
+    ], label, async (v, c2) => {
+      const r = await adm(act, { id, amount: v.amount, note: v.note });
+      c2(); note('Saldo ' + rp(r.before) + ' → ' + rp(r.after)); buzz('success'); draw(); if (String(ME.id) === String(id)) saldo();
+    });
+    sh.innerHTML = '<div class="sp"></div>';
+    draw();
+  });
+}
+
+const admDeposits = async box => {
+  const ch = el('div', 'chips'), wrap = el('div'); box.append(ch, wrap);
+  const load = async s => {
+    [...ch.children].forEach(b => b.classList.toggle('on', b.dataset.s === s));
+    wrap.innerHTML = '<div class="sp"></div>';
+    try {
+      const d = await adm('deposits', { status: s });
+      wrap.innerHTML = '';
+      if (!d.length) { wrap.innerHTML = '<div class="msg">Belum ada data.</div>'; return; }
+      d.forEach(x => {
+        const r = el('div', 'row', '<div class="t"><b>' + rp(x.nominal) + ' · ' + esc(x.name || x.uid) + '</b><span>' + esc(String(x.created_at || '').slice(0, 16)) + ' · ID ' + esc(x.uid) + '</span></div><div class="p">' + stt(x.status) + '</div>');
+        r.onclick = () => sheet((sh, close) => {
+          sh.innerHTML = '<h2 class="serif">Deposit ' + rp(x.nominal) + '</h2>' + kv({ Status: DST[x.status] || x.status, User: (x.name || '') + (x.username ? ' @' + x.username : ''), 'ID user': x.uid, 'Total bayar': rp(x.total_bayar), 'Saldo masuk': rp(x.total_diterima), 'Sudah dikreditkan': x.credited ? 'Ya' : 'Belum', 'ID deposit': x.id, TRX: x.trx_id, Dibuat: x.created_at });
+          const run = async (a, msg) => { try { const r2 = await adm(a, { id: x.id }); close(); toast(msg + (r2.credited_now ? '\nSaldo user ditambah ' + rp(r2.credited_now) : '') + '\nStatus: ' + (DST[r2.status] || r2.status)); load(s); } catch (e) { toast(e.message); } };
+          if (x.status === 'pending') {
+            const a = el('button', 'btn', ic('refresh') + 'Cek status'); a.style.marginTop = '12px'; a.onclick = () => run('dep_check', 'Dicek');
+            const b = el('button', 'btn bad', ic('x') + 'Batalkan'); b.onclick = () => confirmBox('Batalkan deposit ini?', () => run('dep_cancel', 'Dibatalkan'));
+            sh.append(a, b);
+          }
+          const c = el('button', 'btn g', 'Tutup'); c.style.marginTop = '8px'; c.onclick = close; sh.appendChild(c);
+        });
+        wrap.appendChild(r);
+      });
+    } catch (e) { wrap.innerHTML = '<div class="msg err">' + esc(e.message) + '</div>'; }
+  };
+  [['Semua', ''], ['Pending', 'pending'], ['Berhasil', 'berhasil'], ['Batal', 'batal'], ['Kedaluwarsa', 'kadaluarsa']].forEach(([t, s]) => {
+    const b = el('button', 'chip', t); b.dataset.s = s; b.onclick = () => load(s); ch.appendChild(b);
+  });
+  load('');
+};
+
+const admOrders = async box => {
+  const d = await adm('orders');
+  if (!d.length) { box.innerHTML = '<div class="msg">Belum ada order tercatat.</div>'; return; }
+  list(box, d, x => [rp(x.cost) + (x.refunded ? ' · refund' : ''), fmtT(x.t) + ' · ' + x.ep + ' · user ' + x.uid, null, () => userSheet(String(x.uid))], false);
+};
+
+const admLogs = async box => {
+  const d = await adm('logs');
+  if (!d.length) { box.innerHTML = '<div class="msg">Belum ada log.</div>'; return; }
+  list(box, d, x => [x.act + (x.target ? ' · ' + x.target : ''), fmtT(x.t) + ' · ' + x.by + (x.detail ? ' · ' + x.detail : ''), null, null], false);
+};
+
+const admBroadcast = async box => {
+  box.appendChild(el('label', '', 'Pesan untuk semua pengguna (tidak termasuk yang diblokir)'));
+  const t = el('textarea'); t.placeholder = 'Tulis pengumuman…'; box.appendChild(t);
+  const info = el('div', 'msg'); info.style.padding = '12px';
+  const b = el('button', 'btn', ic('horn') + 'Kirim broadcast');
+  b.onclick = () => {
+    if (!t.value.trim()) return toast('Pesan kosong');
+    confirmBox('Kirim ke semua pengguna?', async () => {
+      b.disabled = true;
+      try { const r = await adm('broadcast', { text: t.value }); t.value = ''; info.textContent = 'Mengirim ke ' + r.total + ' user…'; poll(); }
+      catch (e) { toast(e.message); b.disabled = false; }
+    });
+  };
+  const poll = async () => {
+    if (!box.isConnected) return;
+    try {
+      const s = (await adm('stats')).broadcast;
+      info.textContent = (s.running ? 'Mengirim… ' : 'Selesai. ') + s.sent + ' terkirim, ' + s.failed + ' gagal dari ' + s.total;
+      if (s.running) setTimeout(poll, 2000); else b.disabled = false;
+    } catch (e) {}
+  };
+  box.append(b, info);
+};
+
+const SCREENS = { nomor, aktif, sosmed, topup, lain, riwayat, admin: adminHome };
+tab('nomor');
+badge();
+saldo();
+
+// refresh saldo otomatis tiap 30 detik
+setInterval(saldo, 30000);
+document.querySelector('.bal').addEventListener('click', () => saldo(true));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) saldo(); });
+</script>
+</body>
+</html>
