@@ -9,11 +9,7 @@ module.exports = {
   BOT_TOKEN: process.env.BOT_TOKEN || '9228355451:AAGe6mmyvtBN-uO2nu-xSqkPwjD1V2vH-MI',
 
   // Database saldo di GitHub: https://github.com/<GH_OWNER>/<GH_REPO>/blob/<GH_BRANCH>/<GH_PATH>
-  GH_TOKEN:  process.env.GH_TOKEN  || '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',     // fine-grained, izin Contents: Read-only
-  GH_OWNER:  process.env.GH_OWNER  || 'hammm638',  // pemilik repo (username/org)
-  GH_REPO:   process.env.GH_REPO   || 'DATABASEDIGITECID',
-  GH_PATH:   process.env.GH_PATH   || 'DATABASE/users.json',
-  GH_BRANCH: process.env.GH_BRANCH || 'main',
+  SALDO_FILE: process.env.SALDO_FILE || require('path').join(__dirname, 'saldo.json'),
 
   // true = order hanya boleh kalau saldo user di users.json > 0 dan tidak banned
   ORDER_GUARD: (process.env.ORDER_GUARD || 'true') !== 'false'
